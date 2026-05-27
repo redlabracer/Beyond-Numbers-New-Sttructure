@@ -1,0 +1,55 @@
+﻿<Publish>
+	<!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
+	<ModId Value="142309" />
+	<!--Name of the mod to display to players-->
+	<DisplayName Value="Beyond Numbers" />
+	<!--Short description of the mod-->
+	<ShortDescription Value="Hides Population number (or demand bars), when not hovering over it. Now Includes Show Text Trend by DanielVNZ" />
+	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
+	<!--LongDescription Value="This is a long description" /-->
+	<LongDescription>
+		Beyond Numbers hides the population number on the city toolbar unless the player hovers over it (Need to be activated in Settings). It also hides the demand bars in a similar manner (can be activated in the settings). This helps reduce stress when building a detailed city, as the raw numbers are only shown when you actually want to see them. 
+		
+		Features: Everything in this Mod can be Activated/Deactivated in the Settings 
+		- Hide Population Number: The population count is not hidden by default.
+		- Hide Demand Bars: Optionally hide the demand bars (Residential, Commercial, Industrial) until hovered.
+		- Hide Time of day: Optinal you can Hide these to reduce stress when building detail as it doesnt show how long you have been detailing in the current game Session.
+		- Hide Current Year: Optinal you can Hide these to reduce stress when building detail as it doesnt show how long you have been detailing in the current game Session.
+		- Population Trend Overlay: A subtle balloon indicator shows whether your population is growing or shrinking — without showing the exact number.
+		- Money Trend Overlay: A similar overlay shows the trend of your city’s budget over time, so you stay informed without feeling pressured.
+		- Show Text Trends integration: The functionality of the “Show Text Trends” mod is now built directly into Beyond Numbers, combining both mods into one.
+		- Fully configurable: All overlays and hiding behaviors can be toggled independently in the mod settings. Special Thanks to DanielVNZ for who originally created the “Show Text Trends” mod, which has now been merged into Beyond Numbers.
+		
+		If you have any feedback or suggestions, please let me know in the forum thread or on the Discord modding server: https://discord.gg/HTav7ARPs2 
+		
+		The New Thumbnail is based on the Thumbnail Style by Luca (The mod Author of Platter). I had a chat with Luca and got his permission to use the Thumbnail Style for Beyond Numbers.
+	</LongDescription>
+	<!--Thumbnail-->
+	<Thumbnail Value="Properties/Thumbnail.png" />
+	<!--Screenshot, can be set multiple times-->
+	<Screenshot Value="Properties/Screenshot2.png" />
+	<Screenshot Value="Properties/Screenshot3.png" />
+	<Screenshot Value="Properties/Screenshot4.png" />
+	<Screenshot Value="Properties/Screenshot5.png" />
+	<!--Tag, can be set multiple times-->
+	<Tag Value="Code Mod" />
+	<!--Link to the forum post where the mod can be discussed-->
+	<ForumLink Value="https://forum.paradoxplaza.com/forum/threads/beyond-numbers-mod.1919446/" />
+	<!--Version of the mod-->
+	<ModVersion Value="26.5.4" />
+	<!--Recommended version of the base game to use the mod-->
+	<GameVersion Value="1.5.*" />
+	<!--Dependency for the mod, can be set multiple times-->
+	<!--<Dependency Id="" />-->
+	<!--Required DLC, can be set multiple times. Supported values are "Landmark Buildings", "San Fransisco Set", "Beach Properties", "Urban Promenades", "Modern Architecture"-->
+	<!--<RequiredDLC Value="" />-->
+	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
+	<ChangeLog Value="- Added two new Hide features 1. Hide current Year 2. Hide Current Time of day. On the Interel side has the Project structure changed and also Big News we now have a proper Thumbnail :) " />
+	<!--<ChangeLog>
+	</ChangeLog>-->
+	<!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "x", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
+	<ExternalLink Type="github" Url="https://github.com/redlabracer/Beyond-Numbers" />
+	<ExternalLink Type="discord" Url="https://discord.com/channels/1024242828114673724/1499049893296078979" />
+	<!--Supported values Public, Private, Unlisted-->
+	<AccessLevel Value="Public" />
+</Publish>

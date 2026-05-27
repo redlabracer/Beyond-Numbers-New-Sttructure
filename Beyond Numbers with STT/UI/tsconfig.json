@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "resolveJsonModule": true,
+    "paths": {
+      "mod.json": ["./mod.json"],
+      "*": ["./src/*", "./node_modules/*"]
+    }
+  }
+}
