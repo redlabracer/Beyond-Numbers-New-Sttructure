@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { useValue } from "cs2/api";
 import { toolbarBottom } from "cs2/bindings";
 import {
+    cityWatchdogInstalled$,
     showMoneyTrendHourly$,
     showMoneyTrendMonthly$,
     daysPerYear$,
@@ -15,6 +16,7 @@ const SEP_CLASS = "bn-money-delta-sep";
 
 const MoneyTrend: React.FC = () => {
     const moneyDelta = useValue(toolbarBottom.moneyDelta$);
+    const cityWatchdogInstalled = useValue(cityWatchdogInstalled$);
     const showHourly = useValue(showMoneyTrendHourly$);
     const showMonthly = useValue(showMoneyTrendMonthly$);
     const daysPerYear = useValue(daysPerYear$);
@@ -22,20 +24,25 @@ const MoneyTrend: React.FC = () => {
     useEffect(() => {
         const trendElements = document.querySelectorAll(".trend_IAr");
         if (trendElements.length < 2) return;
+
         const anchor = trendElements[1];
         const sign = moneyDelta < 0 ? "negative_Moc" : "positive_n5t";
 
-        upsertAfterAnchor(anchor, HOURLY_CLASS, sign,
-            showHourly ? `${formatNumber(moneyDelta)} /h` : null);
+        // Extra guard in case saved settings were ON before City Watchdog was installed.
+        const effectiveShowHourly = showHourly && !cityWatchdogInstalled;
+        const effectiveShowMonthly = showMonthly && !cityWatchdogInstalled;
 
-        const sepNeeded = showHourly && showMonthly;
+        upsertAfterAnchor(anchor, HOURLY_CLASS, sign,
+            effectiveShowHourly ? `${formatNumber(moneyDelta)} /h` : null);
+
+        const sepNeeded = effectiveShowHourly && effectiveShowMonthly;
         upsertAfterHourly(anchor, SEP_CLASS, "",
             sepNeeded ? " · " : null);
 
         const monthly = hourlyToMonthly(moneyDelta, daysPerYear);
         upsertAfterSep(anchor, MONTHLY_CLASS, sign,
-            showMonthly ? `${formatNumber(monthly)} /M` : null);
-    }, [moneyDelta, showHourly, showMonthly, daysPerYear]);
+            effectiveShowMonthly ? `${formatNumber(monthly)} /M` : null);
+    }, [moneyDelta, cityWatchdogInstalled, showHourly, showMonthly, daysPerYear]);
 
     return null;
 };

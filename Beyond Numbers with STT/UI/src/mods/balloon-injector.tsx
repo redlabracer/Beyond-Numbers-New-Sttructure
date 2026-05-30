@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useCallback } from "react";
+﻿import React, { useEffect, useRef, useCallback } from "react";
 import { useValue } from "cs2/api";
 import { economyBudget, toolbarBottom } from "cs2/bindings";
 import {
+    cityWatchdogInstalled$,
     enableMoneyTooltip$,
     showTooltipIncome$,
     showTooltipExpense$,
@@ -72,6 +73,8 @@ interface MoneyState {
 }
 
 const BalloonInjector: React.FC = () => {
+    const cityWatchdogInstalled = useValue(cityWatchdogInstalled$);
+
     const popDelta = useValue(toolbarBottom.populationDelta$);
     const showPopMonthly = useValue(showPopTrendMonthly$);
 
@@ -97,14 +100,18 @@ const BalloonInjector: React.FC = () => {
     useEffect(() => {
         ensureStyle();
 
+        // Master OFF or City Watchdog installed means no extra tooltip rows.
+        const effectiveTooltipEnabled = moneyEnabled && !cityWatchdogInstalled;
+        const effectivePopMonthly = effectiveTooltipEnabled && showPopMonthly;
+
         popStateRef.current = {
-            enabled: showPopMonthly,
-            showMonthly: showPopMonthly,
+            enabled: effectivePopMonthly,
+            showMonthly: effectivePopMonthly,
             delta: popDelta,
             daysPerYear,
         };
         moneyStateRef.current = {
-            enabled: moneyEnabled,
+            enabled: effectiveTooltipEnabled,
             showIncome,
             showExpense,
             showNet,
@@ -136,6 +143,7 @@ const BalloonInjector: React.FC = () => {
             observerRef.current = null;
         };
     }, [
+        cityWatchdogInstalled,
         popDelta, showPopMonthly,
         moneyEnabled, moneyDelta, showIncome, showExpense, showNet,
         showHourly, showMonthly, income, expense, daysPerYear,
@@ -171,11 +179,11 @@ function ensureSection(balloon: HTMLElement): HTMLElement {
     if (!section) {
         section = document.createElement("div");
         section.className = SECTION_CLASS;
-            const host =
-                balloon.querySelector<HTMLElement>("[class*='content_']") ??
-                (balloon.firstElementChild as HTMLElement | null) ??
-                balloon;
-            host.appendChild(section);
+        const host =
+            balloon.querySelector<HTMLElement>("[class*='content_']") ??
+            (balloon.firstElementChild as HTMLElement | null) ??
+            balloon;
+        host.appendChild(section);
     }
     section.innerHTML = "";
     return section;

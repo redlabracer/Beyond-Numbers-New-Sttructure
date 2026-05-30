@@ -1,8 +1,8 @@
-using Colossal;
-using System.Collections.Generic;
-
-namespace Beyond_Numbers_with_STT
+﻿namespace Beyond_Numbers_with_STT
 {
+    using Colossal;
+    using System.Collections.Generic;
+
     public class LocaleEN : IDictionarySource
     {
         private readonly Setting m_Setting;
@@ -21,7 +21,7 @@ namespace Beyond_Numbers_with_STT
 
                 { m_Setting.GetOptionGroupLocaleID(Setting.kVisibilityGroup), "Visibility Settings" },
                 { m_Setting.GetOptionGroupLocaleID(Setting.kTrendGroup), "Money & Population Trends" },
-                { m_Setting.GetOptionGroupLocaleID(Setting.kTooltipGroup), "Detailed Money Tooltip" },
+                { m_Setting.GetOptionGroupLocaleID(Setting.kTooltipGroup), "Money & Population Tooltips" },
 
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.HidePopulation)), "Hide Population" },
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.HidePopulation)), "Hides the population number until hovered." },
@@ -41,14 +41,16 @@ namespace Beyond_Numbers_with_STT
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowPopTrendMonthly)), "Show Population Trend (Monthly)" },
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowPopTrendMonthly)), "Displays the monthly population change next to the population value." },
 
-                { m_Setting.GetOptionLabelLocaleID(nameof(Setting.EnableMoneyTooltip)), "Enable Detailed Money Tooltip" },
-                { m_Setting.GetOptionDescLocaleID(nameof(Setting.EnableMoneyTooltip)), "Shows a detailed breakdown when hovering the money value." },
+                // Master toggle. Child tooltip options are hidden until this is enabled.
+                { m_Setting.GetOptionLabelLocaleID(nameof(Setting.EnableMoneyTooltip)), "Enable Money Tooltips" },
+                { m_Setting.GetOptionDescLocaleID(nameof(Setting.EnableMoneyTooltip)), "Shows Beyond's extra money and population tooltip details. Hidden and forced off when City Watchdog is installed." },
+
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipIncome)), "Tooltip: Show Income" },
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowTooltipIncome)), "Includes total income in the money tooltip." },
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipExpense)), "Tooltip: Show Expense" },
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowTooltipExpense)), "Includes total expense in the money tooltip." },
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipNet)), "Tooltip: Show Net" },
-                { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowTooltipNet)), "Includes net (income minus expense) in the money tooltip." },
+                { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowTooltipNet)), "Includes net income minus expense in the money tooltip." },
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipHourlyValues)), "Tooltip: Show Hourly Values" },
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowTooltipHourlyValues)), "Displays values per hour in the tooltip." },
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipMonthlyValues)), "Tooltip: Show Monthly Values" },

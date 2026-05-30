@@ -1,13 +1,13 @@
-using Colossal.IO.AssetDatabase;
-using Colossal.Logging;
-using Game;
-using Game.Modding;
-using Game.SceneFlow;
-using Beyond_Numbers_with_STT.Systems;
-using Unity.Entities;
-
-namespace Beyond_Numbers_with_STT
+﻿namespace Beyond_Numbers_with_STT
 {
+    using Beyond_Numbers_with_STT.Systems;
+    using Colossal.IO.AssetDatabase;
+    using Colossal.Logging;
+    using Game;
+    using Game.Modding;
+    using Game.SceneFlow;
+    using Unity.Entities;
+
     public class Mod : IMod
     {
         public static ILog log = LogManager.GetLogger(nameof(Mod)).SetShowsErrorsInUI(false);
@@ -18,8 +18,9 @@ namespace Beyond_Numbers_with_STT
             log.Info("Beyond Numbers Mod loaded!");
 
             m_Setting = new Setting(this);
+            var defaultSetting = new Setting(this);
 
-            AssetDatabase.global.LoadSettings(nameof(Beyond_Numbers_with_STT), m_Setting, new Setting(this));
+            AssetDatabase.global.LoadSettings(nameof(Beyond_Numbers_with_STT), m_Setting, defaultSetting);
 
             m_Setting.RegisterInOptionsUI();
 

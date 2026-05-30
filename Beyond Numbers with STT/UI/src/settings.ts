@@ -1,4 +1,4 @@
-import { bindValue } from "cs2/api";
+﻿import { bindValue } from "cs2/api";
 const GROUP = "BeyondNumbers";
 
 export const hidePopulation$ = bindValue<boolean>(GROUP, "hidePopulation", false);
@@ -11,12 +11,14 @@ export const showMoneyTrendMonthly$ = bindValue<boolean>(GROUP, "showMoneyTrendM
 export const showPopTrendHourly$    = bindValue<boolean>(GROUP, "showPopTrendHourly",    true);
 export const showPopTrendMonthly$   = bindValue<boolean>(GROUP, "showPopTrendMonthly",   false);
 
-export const enableMoneyTooltip$       = bindValue<boolean>(GROUP, "enableMoneyTooltip",       true);
+export const enableMoneyTooltip$       = bindValue<boolean>(GROUP, "enableMoneyTooltip",      false);
 export const showTooltipIncome$        = bindValue<boolean>(GROUP, "showTooltipIncome",        true);
 export const showTooltipExpense$       = bindValue<boolean>(GROUP, "showTooltipExpense",       true);
 export const showTooltipNet$           = bindValue<boolean>(GROUP, "showTooltipNet",           true);
 export const showTooltipHourlyValues$  = bindValue<boolean>(GROUP, "showTooltipHourlyValues",  true);
 export const showTooltipMonthlyValues$ = bindValue<boolean>(GROUP, "showTooltipMonthlyValues", true);
+
+export const cityWatchdogInstalled$ = bindValue<boolean>(GROUP,"cityWatchdogInstalled",        false);
 
 export const daysPerYear$ = bindValue<number>(GROUP, "daysPerYear", 365);
 
