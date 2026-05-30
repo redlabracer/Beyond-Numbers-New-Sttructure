@@ -12,7 +12,7 @@ namespace Beyond_Numbers_with_STT.Compatibility
         private const string CityWatchdogAssemblyName = "CityWatchdog";
         private const string CityWatchdogModTypeName = "CityWatchdog.Mod";
 
-        internal static bool IsInstalled()
+        internal static bool IsCityWatchdogInstalled()
         {
             try
             {
@@ -32,10 +32,7 @@ namespace Beyond_Numbers_with_STT.Compatibility
             {
                 string assemblyName = assembly.GetName().Name ?? string.Empty;
 
-                if (string.Equals(
-                        assemblyName,
-                        CityWatchdogAssemblyName,
-                        StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(assemblyName, CityWatchdogAssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
