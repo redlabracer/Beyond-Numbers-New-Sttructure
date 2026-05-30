@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { useValue } from "cs2/api";
 import { toolbarBottom } from "cs2/bindings";
 import {
+    cityWatchdogInstalled$,
     showPopTrendHourly$,
     showPopTrendMonthly$,
     daysPerYear$,
@@ -15,6 +16,7 @@ const SEP_CLASS = "bn-pop-delta-sep";
 
 const PopTrend: React.FC = () => {
     const popDelta = useValue(toolbarBottom.populationDelta$);
+    const cityWatchdogInstalled = useValue(cityWatchdogInstalled$);
     const showHourly = useValue(showPopTrendHourly$);
     const showMonthly = useValue(showPopTrendMonthly$);
     const daysPerYear = useValue(daysPerYear$);
@@ -22,20 +24,25 @@ const PopTrend: React.FC = () => {
     useEffect(() => {
         const trendElements = document.querySelectorAll(".trend_IAr");
         if (trendElements.length < 1) return;
+
         const anchor = trendElements[0];
         const sign = popDelta < 0 ? "negative_Moc" : "positive_n5t";
 
-        upsertAfterAnchor(anchor, HOURLY_CLASS, sign,
-            showHourly ? `${formatNumber(popDelta)} /h` : null);
+        // Extra guard in case saved settings were ON before City Watchdog was installed.
+        const effectiveShowHourly = showHourly && !cityWatchdogInstalled;
+        const effectiveShowMonthly = showMonthly && !cityWatchdogInstalled;
 
-        const sepNeeded = showHourly && showMonthly;
+        upsertAfterAnchor(anchor, HOURLY_CLASS, sign,
+            effectiveShowHourly ? `${formatNumber(popDelta)} /h` : null);
+
+        const sepNeeded = effectiveShowHourly && effectiveShowMonthly;
         upsertAfterHourly(anchor, SEP_CLASS, "",
             sepNeeded ? " · " : null);
 
         const monthly = hourlyToMonthly(popDelta, daysPerYear);
         upsertAfterSep(anchor, MONTHLY_CLASS, sign,
-            showMonthly ? `${formatNumber(monthly)} /M` : null);
-    }, [popDelta, showHourly, showMonthly, daysPerYear]);
+            effectiveShowMonthly ? `${formatNumber(monthly)} /M` : null);
+    }, [popDelta, cityWatchdogInstalled, showHourly, showMonthly, daysPerYear]);
 
     return null;
 };
