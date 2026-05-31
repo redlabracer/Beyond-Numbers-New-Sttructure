@@ -5,6 +5,7 @@ using Game.Modding;
 using Game.SceneFlow;
 using Beyond_Numbers_with_STT.Systems;
 using Unity.Entities;
+using UnityEngine.Profiling;
 
 namespace Beyond_Numbers_with_STT
 {
@@ -13,8 +14,12 @@ namespace Beyond_Numbers_with_STT
         public static ILog log = LogManager.GetLogger(nameof(Mod)).SetShowsErrorsInUI(false);
         public static Setting m_Setting;
 
+        private const string ProfilerPrefix = "BeyondNumbers.";
+
         public void OnLoad(UpdateSystem updateSystem)
         {
+            Profiler.BeginSample(ProfilerPrefix + nameof(OnLoad));
+
             log.Info("Beyond Numbers Mod loaded!");
 
             m_Setting = new Setting(this);
@@ -27,6 +32,8 @@ namespace Beyond_Numbers_with_STT
             GameManager.instance.localizationManager.AddSource("de-DE", new LocaleDE(m_Setting));
 
             updateSystem.UpdateAt<BeyondNumbersUISystem>(SystemUpdatePhase.UIUpdate);
+
+            Profiler.EndSample();
         }
 
         public void OnDispose()
@@ -47,7 +54,13 @@ namespace Beyond_Numbers_with_STT
         /// </summary>
         public static void PushBindings()
         {
-            if (m_Setting == null) return;
+            Profiler.BeginSample(ProfilerPrefix + nameof(PushBindings));
+
+            if (m_Setting == null)
+            {
+                Profiler.EndSample();
+                return;
+            }
 
             foreach (var world in World.All)
             {
@@ -55,9 +68,12 @@ namespace Beyond_Numbers_with_STT
                 if (ui != null)
                 {
                     ui.UpdateBindings();
+                    Profiler.EndSample();
                     return;
                 }
             }
+
+            Profiler.EndSample();
         }
     }
 }

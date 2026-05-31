@@ -1,12 +1,17 @@
 using Colossal.UI.Binding;
 using Game.Simulation;
 using Game.UI;
+using UnityEngine.Profiling;
 
 namespace Beyond_Numbers_with_STT.Systems
 {
     public partial class BeyondNumbersUISystem : UISystemBase
     {
         public const string GroupName = "BeyondNumbers";
+
+        // Prefix for all custom profiler markers emitted by this mod so they are
+        // easy to find/filter in the Unity profiler window.
+        private const string ProfilerPrefix = "BeyondNumbers.";
 
         private TimeSystem m_TimeSystem;
 
@@ -31,6 +36,8 @@ namespace Beyond_Numbers_with_STT.Systems
 
         protected override void OnCreate()
         {
+            Profiler.BeginSample(ProfilerPrefix + nameof(OnCreate));
+
             base.OnCreate();
             m_TimeSystem = World.GetOrCreateSystemManaged<TimeSystem>();
 
@@ -52,30 +59,50 @@ namespace Beyond_Numbers_with_STT.Systems
             AddBinding(b_showTooltipMonthlyValues = new ValueBinding<bool>(GroupName, "showTooltipMonthlyValues", Mod.m_Setting?.ShowTooltipMonthlyValues ?? true));
 
             AddBinding(b_daysPerYear = new ValueBinding<int>(GroupName, "daysPerYear", GetDaysPerYear()));
+
+            Profiler.EndSample();
         }
 
         public void UpdateBindings()
         {
-            if (Mod.m_Setting == null) return;
+            Profiler.BeginSample(ProfilerPrefix + nameof(UpdateBindings));
 
+            if (Mod.m_Setting == null)
+            {
+                Profiler.EndSample();
+                return;
+            }
+
+            // Nested sample: hide/visibility toggles. Profiler samples can be
+            // stacked, so this appears as a sub-sample of UpdateBindings.
+            Profiler.BeginSample(ProfilerPrefix + "UpdateBindings.Hide");
             b_hidePopulation.Update(Mod.m_Setting.HidePopulation);
             b_hideDemand    .Update(Mod.m_Setting.HideDemand);
             b_hideDate      .Update(Mod.m_Setting.HideDate);
             b_hideTime      .Update(Mod.m_Setting.HideTime);
+            Profiler.EndSample();
 
+            // Nested sample: trend toggles.
+            Profiler.BeginSample(ProfilerPrefix + "UpdateBindings.Trends");
             b_showMoneyTrendHourly .Update(Mod.m_Setting.ShowMoneyTrendHourly);
             b_showMoneyTrendMonthly.Update(Mod.m_Setting.ShowMoneyTrendMonthly);
             b_showPopTrendHourly   .Update(Mod.m_Setting.ShowPopTrendHourly);
             b_showPopTrendMonthly  .Update(Mod.m_Setting.ShowPopTrendMonthly);
+            Profiler.EndSample();
 
+            // Nested sample: tooltip toggles.
+            Profiler.BeginSample(ProfilerPrefix + "UpdateBindings.Tooltip");
             b_enableMoneyTooltip      .Update(Mod.m_Setting.EnableMoneyTooltip);
             b_showTooltipIncome       .Update(Mod.m_Setting.ShowTooltipIncome);
             b_showTooltipExpense      .Update(Mod.m_Setting.ShowTooltipExpense);
             b_showTooltipNet          .Update(Mod.m_Setting.ShowTooltipNet);
             b_showTooltipHourlyValues .Update(Mod.m_Setting.ShowTooltipHourlyValues);
             b_showTooltipMonthlyValues.Update(Mod.m_Setting.ShowTooltipMonthlyValues);
+            Profiler.EndSample();
 
             b_daysPerYear.Update(GetDaysPerYear());
+
+            Profiler.EndSample();
         }
 
         private int GetDaysPerYear()
