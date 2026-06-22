@@ -2,6 +2,7 @@ using Colossal.UI.Binding;
 using Game.Simulation;
 using Game.UI;
 using UnityEngine.Profiling;
+using Beyond_Numbers_with_STT.Compatibility;
 
 namespace Beyond_Numbers_with_STT.Systems
 {
@@ -32,6 +33,8 @@ namespace Beyond_Numbers_with_STT.Systems
         private ValueBinding<bool> b_showTooltipHourlyValues;
         private ValueBinding<bool> b_showTooltipMonthlyValues;
 
+        private ValueBinding<bool> b_cityWatchdogInstalled;
+
         private ValueBinding<int> b_daysPerYear;
 
         protected override void OnCreate()
@@ -46,18 +49,19 @@ namespace Beyond_Numbers_with_STT.Systems
             AddBinding(b_hideDate       = new ValueBinding<bool>(GroupName, "hideDate",       Mod.m_Setting?.HideDate       ?? false));
             AddBinding(b_hideTime       = new ValueBinding<bool>(GroupName, "hideTime",       Mod.m_Setting?.HideTime       ?? false));
 
-            AddBinding(b_showMoneyTrendHourly  = new ValueBinding<bool>(GroupName, "showMoneyTrendHourly",  Mod.m_Setting?.ShowMoneyTrendHourly  ?? true));
-            AddBinding(b_showMoneyTrendMonthly = new ValueBinding<bool>(GroupName, "showMoneyTrendMonthly", Mod.m_Setting?.ShowMoneyTrendMonthly ?? false));
-            AddBinding(b_showPopTrendHourly    = new ValueBinding<bool>(GroupName, "showPopTrendHourly",    Mod.m_Setting?.ShowPopTrendHourly    ?? true));
-            AddBinding(b_showPopTrendMonthly   = new ValueBinding<bool>(GroupName, "showPopTrendMonthly",   Mod.m_Setting?.ShowPopTrendMonthly   ?? false));
+            AddBinding(b_showMoneyTrendHourly  = new ValueBinding<bool>(GroupName, "showMoneyTrendHourly",  Mod.m_Setting?.EffectiveShowMoneyTrendHourly  ?? true));
+            AddBinding(b_showMoneyTrendMonthly = new ValueBinding<bool>(GroupName, "showMoneyTrendMonthly", Mod.m_Setting?.EffectiveShowMoneyTrendMonthly ?? false));
+            AddBinding(b_showPopTrendHourly    = new ValueBinding<bool>(GroupName, "showPopTrendHourly",    Mod.m_Setting?.EffectiveShowPopTrendHourly    ?? true));
+            AddBinding(b_showPopTrendMonthly   = new ValueBinding<bool>(GroupName, "showPopTrendMonthly",   Mod.m_Setting?.EffectiveShowPopTrendMonthly   ?? false));
 
-            AddBinding(b_enableMoneyTooltip       = new ValueBinding<bool>(GroupName, "enableMoneyTooltip",       Mod.m_Setting?.EnableMoneyTooltip       ?? true));
-            AddBinding(b_showTooltipIncome        = new ValueBinding<bool>(GroupName, "showTooltipIncome",        Mod.m_Setting?.ShowTooltipIncome        ?? true));
-            AddBinding(b_showTooltipExpense       = new ValueBinding<bool>(GroupName, "showTooltipExpense",       Mod.m_Setting?.ShowTooltipExpense       ?? true));
-            AddBinding(b_showTooltipNet           = new ValueBinding<bool>(GroupName, "showTooltipNet",           Mod.m_Setting?.ShowTooltipNet           ?? true));
-            AddBinding(b_showTooltipHourlyValues  = new ValueBinding<bool>(GroupName, "showTooltipHourlyValues",  Mod.m_Setting?.ShowTooltipHourlyValues  ?? true));
-            AddBinding(b_showTooltipMonthlyValues = new ValueBinding<bool>(GroupName, "showTooltipMonthlyValues", Mod.m_Setting?.ShowTooltipMonthlyValues ?? true));
+            AddBinding(b_enableMoneyTooltip       = new ValueBinding<bool>(GroupName, "enableMoneyTooltip",       Mod.m_Setting?.EffectiveEnableMoneyTooltip       ?? true));
+            AddBinding(b_showTooltipIncome        = new ValueBinding<bool>(GroupName, "showTooltipIncome",        Mod.m_Setting?.EffectiveShowTooltipIncome        ?? true));
+            AddBinding(b_showTooltipExpense       = new ValueBinding<bool>(GroupName, "showTooltipExpense",       Mod.m_Setting?.EffectiveShowTooltipExpense       ?? true));
+            AddBinding(b_showTooltipNet           = new ValueBinding<bool>(GroupName, "showTooltipNet",           Mod.m_Setting?.EffectiveShowTooltipNet           ?? true));
+            AddBinding(b_showTooltipHourlyValues  = new ValueBinding<bool>(GroupName, "showTooltipHourlyValues",  Mod.m_Setting?.EffectiveShowTooltipHourlyValues  ?? true));
+            AddBinding(b_showTooltipMonthlyValues = new ValueBinding<bool>(GroupName, "showTooltipMonthlyValues", Mod.m_Setting?.EffectiveShowTooltipMonthlyValues ?? true));
 
+            AddBinding(b_cityWatchdogInstalled = new ValueBinding<bool>(GroupName, "cityWatchdogInstalled", CwdCompatibility.IsCityWatchdogInstalled()));
             AddBinding(b_daysPerYear = new ValueBinding<int>(GroupName, "daysPerYear", GetDaysPerYear()));
 
             Profiler.EndSample();
@@ -84,22 +88,23 @@ namespace Beyond_Numbers_with_STT.Systems
 
             // Nested sample: trend toggles.
             Profiler.BeginSample(ProfilerPrefix + "UpdateBindings.Trends");
-            b_showMoneyTrendHourly .Update(Mod.m_Setting.ShowMoneyTrendHourly);
-            b_showMoneyTrendMonthly.Update(Mod.m_Setting.ShowMoneyTrendMonthly);
-            b_showPopTrendHourly   .Update(Mod.m_Setting.ShowPopTrendHourly);
-            b_showPopTrendMonthly  .Update(Mod.m_Setting.ShowPopTrendMonthly);
+            b_showMoneyTrendHourly .Update(Mod.m_Setting.EffectiveShowMoneyTrendHourly);
+            b_showMoneyTrendMonthly.Update(Mod.m_Setting.EffectiveShowMoneyTrendMonthly);
+            b_showPopTrendHourly   .Update(Mod.m_Setting.EffectiveShowPopTrendHourly);
+            b_showPopTrendMonthly  .Update(Mod.m_Setting.EffectiveShowPopTrendMonthly);
             Profiler.EndSample();
 
             // Nested sample: tooltip toggles.
             Profiler.BeginSample(ProfilerPrefix + "UpdateBindings.Tooltip");
-            b_enableMoneyTooltip      .Update(Mod.m_Setting.EnableMoneyTooltip);
-            b_showTooltipIncome       .Update(Mod.m_Setting.ShowTooltipIncome);
-            b_showTooltipExpense      .Update(Mod.m_Setting.ShowTooltipExpense);
-            b_showTooltipNet          .Update(Mod.m_Setting.ShowTooltipNet);
-            b_showTooltipHourlyValues .Update(Mod.m_Setting.ShowTooltipHourlyValues);
-            b_showTooltipMonthlyValues.Update(Mod.m_Setting.ShowTooltipMonthlyValues);
+            b_enableMoneyTooltip      .Update(Mod.m_Setting.EffectiveEnableMoneyTooltip);
+            b_showTooltipIncome       .Update(Mod.m_Setting.EffectiveShowTooltipIncome);
+            b_showTooltipExpense      .Update(Mod.m_Setting.EffectiveShowTooltipExpense);
+            b_showTooltipNet          .Update(Mod.m_Setting.EffectiveShowTooltipNet);
+            b_showTooltipHourlyValues .Update(Mod.m_Setting.EffectiveShowTooltipHourlyValues);
+            b_showTooltipMonthlyValues.Update(Mod.m_Setting.EffectiveShowTooltipMonthlyValues);
             Profiler.EndSample();
 
+            b_cityWatchdogInstalled.Update(CwdCompatibility.IsCityWatchdogInstalled());
             b_daysPerYear.Update(GetDaysPerYear());
 
             Profiler.EndSample();

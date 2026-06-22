@@ -18,6 +18,8 @@ export const showTooltipNet$           = bindValue<boolean>(GROUP, "showTooltipN
 export const showTooltipHourlyValues$  = bindValue<boolean>(GROUP, "showTooltipHourlyValues",  true);
 export const showTooltipMonthlyValues$ = bindValue<boolean>(GROUP, "showTooltipMonthlyValues", true);
 
+export const cityWatchdogInstalled$ = bindValue<boolean>(GROUP, "cityWatchdogInstalled", false);
+
 export const daysPerYear$ = bindValue<number>(GROUP, "daysPerYear", 365);
 
 export const HOURS_PER_MONTH = 24;

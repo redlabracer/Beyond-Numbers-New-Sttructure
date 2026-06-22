@@ -42,7 +42,7 @@ namespace Beyond_Numbers_with_STT
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowPopTrendMonthly)), "Displays the monthly population change next to the population value." },
 
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.EnableMoneyTooltip)), "Enable Detailed Money Tooltip" },
-                { m_Setting.GetOptionDescLocaleID(nameof(Setting.EnableMoneyTooltip)), "Shows a detailed breakdown when hovering the money value." },
+                { m_Setting.GetOptionDescLocaleID(nameof(Setting.EnableMoneyTooltip)), "Shows a detailed breakdown when hovering the money value. Hidden and forced off when City Watchdog is installed." },
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipIncome)), "Tooltip: Show Income" },
                 { m_Setting.GetOptionDescLocaleID(nameof(Setting.ShowTooltipIncome)), "Includes total income in the money tooltip." },
                 { m_Setting.GetOptionLabelLocaleID(nameof(Setting.ShowTooltipExpense)), "Tooltip: Show Expense" },
