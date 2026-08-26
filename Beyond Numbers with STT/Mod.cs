@@ -11,7 +11,7 @@ namespace Beyond_Numbers_with_STT
 {
     public class Mod : IMod
     {
-        public static ILog log = LogManager.GetLogger(nameof(Mod)).SetShowsErrorsInUI(false);
+        public static ILog log = LogManager.GetLogger("Beyond Numbers").SetShowsErrorsInUI(false);
         public static Setting m_Setting;
 
         private const string ProfilerPrefix = "BeyondNumbers.";
@@ -24,12 +24,14 @@ namespace Beyond_Numbers_with_STT
 
             m_Setting = new Setting(this);
 
-            AssetDatabase.global.LoadSettings(nameof(Beyond_Numbers_with_STT), m_Setting, new Setting(this));
-
             m_Setting.RegisterInOptionsUI();
 
             GameManager.instance.localizationManager.AddSource("en-US", new LocaleEN(m_Setting));
             GameManager.instance.localizationManager.AddSource("de-DE", new LocaleDE(m_Setting));
+
+            AssetDatabase.global.LoadSettings(nameof(Beyond_Numbers_with_STT), m_Setting, new Setting(this));
+
+            PushBindings();
 
             updateSystem.UpdateAt<BeyondNumbersUISystem>(SystemUpdatePhase.UIUpdate);
 
@@ -46,12 +48,6 @@ namespace Beyond_Numbers_with_STT
             }
         }
 
-        /// <summary>
-        /// Pushes the current setting values into the UI bindings.
-        /// Called from setting setters — never calls ApplyAndSave / Apply
-        /// and never injects JavaScript. The UI module reads the bindings
-        /// and updates the DOM by itself.
-        /// </summary>
         public static void PushBindings()
         {
             Profiler.BeginSample(ProfilerPrefix + nameof(PushBindings));

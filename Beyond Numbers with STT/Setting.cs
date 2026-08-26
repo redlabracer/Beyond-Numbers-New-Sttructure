@@ -49,7 +49,6 @@ namespace Beyond_Numbers_with_STT
             return CityWatchdogDetected;
         }
 
-        // Hide even the master toggle when City Watchdog is installed.
         public bool ShouldHideMoneyPopulationTooltipMasterOption()
         {
             return CityWatchdogDetected;
