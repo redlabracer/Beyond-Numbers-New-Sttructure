@@ -10,6 +10,7 @@ import {
     showTooltipHourlyValues$,
     showTooltipMonthlyValues$,
     showPopTrendMonthly$,
+    cityWatchdogInstalled$,
     daysPerYear$,
     hourlyToMonthly,
     monthlyToHourly,
@@ -24,6 +25,12 @@ const NEGATIVE_COLOR = "#e26b6b";
 
 export const DescriptionTooltipExtension: ModuleRegistryExtend = (Component: any) => {
     return (props: any) => {
+        const cityWatchdogInstalled = useValue(cityWatchdogInstalled$);
+
+        if (cityWatchdogInstalled) {
+            return Component(props);
+        }
+
         if (containsIcon(props?.children, MONEY_ICON)) {
             return Component({
                 ...props,

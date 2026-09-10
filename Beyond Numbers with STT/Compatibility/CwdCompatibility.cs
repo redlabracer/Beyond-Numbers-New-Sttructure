@@ -12,13 +12,22 @@ namespace Beyond_Numbers_with_STT.Compatibility
         private const string CityWatchdogAssemblyName = "CityWatchdog";
         private const string CityWatchdogModTypeName = "CityWatchdog.Mod";
 
+        private static bool s_Detected;
+
         internal static bool IsCityWatchdogInstalled()
         {
+            if (s_Detected)
+            {
+                return true;
+            }
+
             try
             {
-                return AppDomain.CurrentDomain
+                s_Detected = AppDomain.CurrentDomain
                     .GetAssemblies()
                     .Any(IsCityWatchdogAssembly);
+
+                return s_Detected;
             }
             catch
             {

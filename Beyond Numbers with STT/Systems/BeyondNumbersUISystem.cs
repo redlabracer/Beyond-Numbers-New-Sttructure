@@ -37,6 +37,10 @@ namespace Beyond_Numbers_with_STT.Systems
 
         private ValueBinding<int> b_daysPerYear;
 
+        private const int CwdCheckInterval = 64;
+        private int m_CwdCheckCounter;
+        private bool m_CwdDetected;
+
         protected override void OnCreate()
         {
             Profiler.BeginSample(ProfilerPrefix + nameof(OnCreate));
@@ -108,6 +112,31 @@ namespace Beyond_Numbers_with_STT.Systems
             b_daysPerYear.Update(GetDaysPerYear());
 
             Profiler.EndSample();
+        }
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            if (m_CwdDetected)
+            {
+                return;
+            }
+
+            if (++m_CwdCheckCounter < CwdCheckInterval)
+            {
+                return;
+            }
+
+            m_CwdCheckCounter = 0;
+
+            if (!CwdCompatibility.IsCityWatchdogInstalled())
+            {
+                return;
+            }
+
+            m_CwdDetected = true;
+            UpdateBindings();
         }
 
         private int GetDaysPerYear()
