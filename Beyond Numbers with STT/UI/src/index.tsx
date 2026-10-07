@@ -1,6 +1,6 @@
 import { ModRegistrar } from "cs2/modding";
 import { StatFieldTrendExtension } from "mods/toolbar-trend";
-import { DescriptionTooltipExtension } from "mods/money-tooltip";
+import { DescriptionTooltipExtension } from "mods/description-tooltip-extension";
 import HideInjector from "mods/hide-injector";
 
 const STAT_FIELD_MODULE = "game-ui/game/components/toolbar/components/stat-field/stat-field.tsx";

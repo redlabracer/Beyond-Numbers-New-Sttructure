@@ -1,5 +1,7 @@
 using Colossal.UI.Binding;
+using Game.City;
 using Game.Simulation;
+using Unity.Entities;
 using Game.UI;
 using UnityEngine.Profiling;
 using Beyond_Numbers_with_STT.Compatibility;
@@ -33,9 +35,41 @@ namespace Beyond_Numbers_with_STT.Systems
         private ValueBinding<bool> b_showTooltipHourlyValues;
         private ValueBinding<bool> b_showTooltipMonthlyValues;
 
+        private ValueBinding<bool> b_enablePopTooltip;
+        private ValueBinding<bool> b_popTooltipMonthlyTrend;
+        private ValueBinding<bool> b_popTooltipPopulation;
+        private ValueBinding<bool> b_popTooltipBirthRate;
+        private ValueBinding<bool> b_popTooltipDeathRate;
+        private ValueBinding<bool> b_popTooltipMovedIn;
+        private ValueBinding<bool> b_popTooltipMovedAway;
+        private ValueBinding<bool> b_popTooltipJobs;
+        private ValueBinding<bool> b_popTooltipEmployed;
+        private ValueBinding<bool> b_popTooltipUnemployment;
+        private ValueBinding<bool> b_popTooltipHomeless;
+        private ValueBinding<bool> b_popTooltipHomelessRate;
+
         private ValueBinding<bool> b_cityWatchdogInstalled;
 
         private ValueBinding<int> b_daysPerYear;
+
+        private CityStatisticsSystem m_CityStatisticsSystem;
+        private CitySystem m_CitySystem;
+        private CountWorkplacesSystem m_CountWorkplacesSystem;
+        private CountHouseholdDataSystem m_CountHouseholdDataSystem;
+
+        private ValueBinding<int> b_popPopulation;
+        private ValueBinding<int> b_popBirthRate;
+        private ValueBinding<int> b_popDeathRate;
+        private ValueBinding<int> b_popMovedIn;
+        private ValueBinding<int> b_popMovedAway;
+        private ValueBinding<int> b_popJobs;
+        private ValueBinding<int> b_popEmployed;
+        private ValueBinding<float> b_popUnemployment;
+        private ValueBinding<int> b_popHomeless;
+        private ValueBinding<float> b_popHomelessRate;
+
+        private const int PopStatsInterval = 32;
+        private int m_PopStatsCounter;
 
         private const int CwdCheckInterval = 64;
         private int m_CwdCheckCounter;
@@ -65,8 +99,37 @@ namespace Beyond_Numbers_with_STT.Systems
             AddBinding(b_showTooltipHourlyValues  = new ValueBinding<bool>(GroupName, "showTooltipHourlyValues",  Mod.m_Setting?.EffectiveShowTooltipHourlyValues  ?? true));
             AddBinding(b_showTooltipMonthlyValues = new ValueBinding<bool>(GroupName, "showTooltipMonthlyValues", Mod.m_Setting?.EffectiveShowTooltipMonthlyValues ?? true));
 
+            AddBinding(b_enablePopTooltip       = new ValueBinding<bool>(GroupName, "enablePopTooltip",       Mod.m_Setting?.EffectiveEnablePopTooltip       ?? true));
+            AddBinding(b_popTooltipMonthlyTrend = new ValueBinding<bool>(GroupName, "popTooltipMonthlyTrend", Mod.m_Setting?.EffectivePopTooltipMonthlyTrend ?? true));
+            AddBinding(b_popTooltipPopulation   = new ValueBinding<bool>(GroupName, "popTooltipPopulation",   Mod.m_Setting?.EffectivePopTooltipPopulation   ?? true));
+            AddBinding(b_popTooltipBirthRate    = new ValueBinding<bool>(GroupName, "popTooltipBirthRate",    Mod.m_Setting?.EffectivePopTooltipBirthRate    ?? true));
+            AddBinding(b_popTooltipDeathRate    = new ValueBinding<bool>(GroupName, "popTooltipDeathRate",    Mod.m_Setting?.EffectivePopTooltipDeathRate    ?? true));
+            AddBinding(b_popTooltipMovedIn      = new ValueBinding<bool>(GroupName, "popTooltipMovedIn",      Mod.m_Setting?.EffectivePopTooltipMovedIn      ?? true));
+            AddBinding(b_popTooltipMovedAway    = new ValueBinding<bool>(GroupName, "popTooltipMovedAway",    Mod.m_Setting?.EffectivePopTooltipMovedAway    ?? true));
+            AddBinding(b_popTooltipJobs         = new ValueBinding<bool>(GroupName, "popTooltipJobs",         Mod.m_Setting?.EffectivePopTooltipJobs         ?? true));
+            AddBinding(b_popTooltipEmployed     = new ValueBinding<bool>(GroupName, "popTooltipEmployed",     Mod.m_Setting?.EffectivePopTooltipEmployed     ?? true));
+            AddBinding(b_popTooltipUnemployment = new ValueBinding<bool>(GroupName, "popTooltipUnemployment", Mod.m_Setting?.EffectivePopTooltipUnemployment ?? true));
+            AddBinding(b_popTooltipHomeless     = new ValueBinding<bool>(GroupName, "popTooltipHomeless",     Mod.m_Setting?.EffectivePopTooltipHomeless     ?? true));
+            AddBinding(b_popTooltipHomelessRate = new ValueBinding<bool>(GroupName, "popTooltipHomelessRate", Mod.m_Setting?.EffectivePopTooltipHomelessRate ?? true));
+
             AddBinding(b_cityWatchdogInstalled = new ValueBinding<bool>(GroupName, "cityWatchdogInstalled", CwdCompatibility.IsCityWatchdogInstalled()));
             AddBinding(b_daysPerYear = new ValueBinding<int>(GroupName, "daysPerYear", GetDaysPerYear()));
+
+            m_CityStatisticsSystem = World.GetOrCreateSystemManaged<CityStatisticsSystem>();
+            m_CitySystem = World.GetOrCreateSystemManaged<CitySystem>();
+            m_CountWorkplacesSystem = World.GetOrCreateSystemManaged<CountWorkplacesSystem>();
+            m_CountHouseholdDataSystem = World.GetOrCreateSystemManaged<CountHouseholdDataSystem>();
+
+            AddBinding(b_popPopulation   = new ValueBinding<int>(GroupName, "popPopulation", 0));
+            AddBinding(b_popBirthRate    = new ValueBinding<int>(GroupName, "popBirthRate", 0));
+            AddBinding(b_popDeathRate    = new ValueBinding<int>(GroupName, "popDeathRate", 0));
+            AddBinding(b_popMovedIn      = new ValueBinding<int>(GroupName, "popMovedIn", 0));
+            AddBinding(b_popMovedAway    = new ValueBinding<int>(GroupName, "popMovedAway", 0));
+            AddBinding(b_popJobs         = new ValueBinding<int>(GroupName, "popJobs", 0));
+            AddBinding(b_popEmployed     = new ValueBinding<int>(GroupName, "popEmployed", 0));
+            AddBinding(b_popUnemployment = new ValueBinding<float>(GroupName, "popUnemployment", 0f));
+            AddBinding(b_popHomeless     = new ValueBinding<int>(GroupName, "popHomeless", 0));
+            AddBinding(b_popHomelessRate = new ValueBinding<float>(GroupName, "popHomelessRate", 0f));
 
             Profiler.EndSample();
         }
@@ -106,6 +169,19 @@ namespace Beyond_Numbers_with_STT.Systems
             b_showTooltipNet          .Update(Mod.m_Setting.EffectiveShowTooltipNet);
             b_showTooltipHourlyValues .Update(Mod.m_Setting.EffectiveShowTooltipHourlyValues);
             b_showTooltipMonthlyValues.Update(Mod.m_Setting.EffectiveShowTooltipMonthlyValues);
+
+            b_enablePopTooltip      .Update(Mod.m_Setting.EffectiveEnablePopTooltip);
+            b_popTooltipMonthlyTrend.Update(Mod.m_Setting.EffectivePopTooltipMonthlyTrend);
+            b_popTooltipPopulation  .Update(Mod.m_Setting.EffectivePopTooltipPopulation);
+            b_popTooltipBirthRate   .Update(Mod.m_Setting.EffectivePopTooltipBirthRate);
+            b_popTooltipDeathRate   .Update(Mod.m_Setting.EffectivePopTooltipDeathRate);
+            b_popTooltipMovedIn     .Update(Mod.m_Setting.EffectivePopTooltipMovedIn);
+            b_popTooltipMovedAway   .Update(Mod.m_Setting.EffectivePopTooltipMovedAway);
+            b_popTooltipJobs        .Update(Mod.m_Setting.EffectivePopTooltipJobs);
+            b_popTooltipEmployed    .Update(Mod.m_Setting.EffectivePopTooltipEmployed);
+            b_popTooltipUnemployment.Update(Mod.m_Setting.EffectivePopTooltipUnemployment);
+            b_popTooltipHomeless    .Update(Mod.m_Setting.EffectivePopTooltipHomeless);
+            b_popTooltipHomelessRate.Update(Mod.m_Setting.EffectivePopTooltipHomelessRate);
             Profiler.EndSample();
 
             b_cityWatchdogInstalled.Update(CwdCompatibility.IsCityWatchdogInstalled());
@@ -117,6 +193,12 @@ namespace Beyond_Numbers_with_STT.Systems
         protected override void OnUpdate()
         {
             base.OnUpdate();
+
+            if (++m_PopStatsCounter >= PopStatsInterval)
+            {
+                m_PopStatsCounter = 0;
+                UpdatePopulationStats();
+            }
 
             if (m_CwdDetected)
             {
@@ -137,6 +219,36 @@ namespace Beyond_Numbers_with_STT.Systems
 
             m_CwdDetected = true;
             UpdateBindings();
+        }
+
+        private void UpdatePopulationStats()
+        {
+            Profiler.BeginSample(ProfilerPrefix + nameof(UpdatePopulationStats));
+            try
+            {
+                Entity city = m_CitySystem.City;
+                if (city != Entity.Null && EntityManager.HasComponent<Population>(city))
+                {
+                    b_popPopulation.Update(EntityManager.GetComponentData<Population>(city).m_Population);
+                }
+
+                b_popBirthRate   .Update(m_CityStatisticsSystem.GetStatisticValue(StatisticType.BirthRate));
+                b_popDeathRate   .Update(m_CityStatisticsSystem.GetStatisticValue(StatisticType.DeathRate));
+                b_popMovedIn     .Update(m_CityStatisticsSystem.GetStatisticValue(StatisticType.CitizensMovedIn));
+                b_popMovedAway   .Update(m_CityStatisticsSystem.GetStatisticValue(StatisticType.CitizensMovedAway));
+                b_popJobs        .Update(m_CountWorkplacesSystem.GetTotalWorkplaces().TotalCount);
+                b_popEmployed    .Update(m_CountHouseholdDataSystem.CityWorkerCount);
+                b_popUnemployment.Update(m_CountHouseholdDataSystem.UnemploymentRate);
+                b_popHomeless    .Update(m_CountHouseholdDataSystem.HomelessCitizenCount);
+                b_popHomelessRate.Update(m_CountHouseholdDataSystem.HomelessnessRate);
+            }
+            catch
+            {
+            }
+            finally
+            {
+                Profiler.EndSample();
+            }
         }
 
         private int GetDaysPerYear()

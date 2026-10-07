@@ -6,14 +6,15 @@ using Game.Settings;
 namespace Beyond_Numbers_with_STT
 {
     [FileLocation("ModsSettings/Beyond_Numbers/Beyond_Numbers")]
-    [SettingsUIGroupOrder(kVisibilityGroup, kTrendGroup, kTooltipGroup)]
-    [SettingsUIShowGroupName(kVisibilityGroup, kTrendGroup, kTooltipGroup)]
+    [SettingsUIGroupOrder(kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
+    [SettingsUIShowGroupName(kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
     public class Setting : ModSetting
     {
         public const string kSection = "Main";
         public const string kVisibilityGroup = "Visibility";
         public const string kTrendGroup = "Trends";
         public const string kTooltipGroup = "MoneyTooltip";
+        public const string kPopTooltipGroup = "PopulationTooltip";
 
         public Setting(IMod mod) : base(mod)
         {
@@ -38,6 +39,19 @@ namespace Beyond_Numbers_with_STT
             ShowTooltipNet = true;
             ShowTooltipHourlyValues = true;
             ShowTooltipMonthlyValues = true;
+
+            EnablePopTooltip = true;
+            PopTooltipMonthlyTrend = true;
+            PopTooltipPopulation = true;
+            PopTooltipBirthRate = true;
+            PopTooltipDeathRate = true;
+            PopTooltipMovedIn = true;
+            PopTooltipMovedAway = true;
+            PopTooltipJobs = true;
+            PopTooltipEmployed = true;
+            PopTooltipUnemployment = true;
+            PopTooltipHomeless = true;
+            PopTooltipHomelessRate = true;
         }
 
         // ----- City Watchdog compatibility -----
@@ -72,6 +86,24 @@ namespace Beyond_Numbers_with_STT
         internal bool EffectiveShowTooltipNet => EffectiveEnableMoneyTooltip && ShowTooltipNet;
         internal bool EffectiveShowTooltipHourlyValues => EffectiveEnableMoneyTooltip && ShowTooltipHourlyValues;
         internal bool EffectiveShowTooltipMonthlyValues => EffectiveEnableMoneyTooltip && ShowTooltipMonthlyValues;
+
+        public bool ShouldHidePopTooltipChildOptions()
+        {
+            return CityWatchdogDetected || !EnablePopTooltip;
+        }
+
+        internal bool EffectiveEnablePopTooltip => !CityWatchdogDetected && EnablePopTooltip;
+        internal bool EffectivePopTooltipMonthlyTrend => EffectiveEnablePopTooltip && PopTooltipMonthlyTrend;
+        internal bool EffectivePopTooltipPopulation => EffectiveEnablePopTooltip && PopTooltipPopulation;
+        internal bool EffectivePopTooltipBirthRate => EffectiveEnablePopTooltip && PopTooltipBirthRate;
+        internal bool EffectivePopTooltipDeathRate => EffectiveEnablePopTooltip && PopTooltipDeathRate;
+        internal bool EffectivePopTooltipMovedIn => EffectiveEnablePopTooltip && PopTooltipMovedIn;
+        internal bool EffectivePopTooltipMovedAway => EffectiveEnablePopTooltip && PopTooltipMovedAway;
+        internal bool EffectivePopTooltipJobs => EffectiveEnablePopTooltip && PopTooltipJobs;
+        internal bool EffectivePopTooltipEmployed => EffectiveEnablePopTooltip && PopTooltipEmployed;
+        internal bool EffectivePopTooltipUnemployment => EffectiveEnablePopTooltip && PopTooltipUnemployment;
+        internal bool EffectivePopTooltipHomeless => EffectiveEnablePopTooltip && PopTooltipHomeless;
+        internal bool EffectivePopTooltipHomelessRate => EffectiveEnablePopTooltip && PopTooltipHomelessRate;
 
         // ----- Visibility -----
         [SettingsUISection(kSection, kVisibilityGroup)]
@@ -143,7 +175,7 @@ namespace Beyond_Numbers_with_STT
         }
         private bool m_ShowPopTrendMonthly;
 
-        // ----- Tooltip -----
+        // ----- Money Tooltip -----
         [SettingsUISection(kSection, kTooltipGroup)]
         [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHideMoneyPopulationTooltipMasterOption))]
         public bool EnableMoneyTooltip
@@ -197,5 +229,114 @@ namespace Beyond_Numbers_with_STT
             set { m_ShowTooltipMonthlyValues = value; Mod.PushBindings(); }
         }
         private bool m_ShowTooltipMonthlyValues;
+
+        // ----- Population Tooltip -----
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHideMoneyPopulationTooltipMasterOption))]
+        public bool EnablePopTooltip
+        {
+            get => m_EnablePopTooltip;
+            set { m_EnablePopTooltip = value; Mod.PushBindings(); }
+        }
+        private bool m_EnablePopTooltip;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipMonthlyTrend
+        {
+            get => m_PopTooltipMonthlyTrend;
+            set { m_PopTooltipMonthlyTrend = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipMonthlyTrend;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipPopulation
+        {
+            get => m_PopTooltipPopulation;
+            set { m_PopTooltipPopulation = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipPopulation;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipBirthRate
+        {
+            get => m_PopTooltipBirthRate;
+            set { m_PopTooltipBirthRate = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipBirthRate;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipDeathRate
+        {
+            get => m_PopTooltipDeathRate;
+            set { m_PopTooltipDeathRate = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipDeathRate;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipMovedIn
+        {
+            get => m_PopTooltipMovedIn;
+            set { m_PopTooltipMovedIn = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipMovedIn;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipMovedAway
+        {
+            get => m_PopTooltipMovedAway;
+            set { m_PopTooltipMovedAway = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipMovedAway;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipJobs
+        {
+            get => m_PopTooltipJobs;
+            set { m_PopTooltipJobs = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipJobs;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipEmployed
+        {
+            get => m_PopTooltipEmployed;
+            set { m_PopTooltipEmployed = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipEmployed;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipUnemployment
+        {
+            get => m_PopTooltipUnemployment;
+            set { m_PopTooltipUnemployment = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipUnemployment;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipHomeless
+        {
+            get => m_PopTooltipHomeless;
+            set { m_PopTooltipHomeless = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipHomeless;
+
+        [SettingsUISection(kSection, kPopTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHidePopTooltipChildOptions))]
+        public bool PopTooltipHomelessRate
+        {
+            get => m_PopTooltipHomelessRate;
+            set { m_PopTooltipHomelessRate = value; Mod.PushBindings(); }
+        }
+        private bool m_PopTooltipHomelessRate;
     }
 }

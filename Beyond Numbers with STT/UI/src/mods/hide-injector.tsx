@@ -39,14 +39,16 @@ div[class*='container_'] > div[class*='field_']:hover > div[class*='content_'] >
 const HIDE_TIME_CSS = `
 div[class*='time-hours_'],
 div[class*='time-colon_'],
-div[class*='time-minutes_'] {
+div[class*='time-minutes_'],
+div[class*='time-period_'] {
     opacity: 0 !important;
-    transition: opacity 0.3s ease-in-out;
+    transition
 }
 
 div[class*='date-time_']:hover div[class*='time-hours_'],
 div[class*='date-time_']:hover div[class*='time-colon_'],
-div[class*='date-time_']:hover div[class*='time-minutes_'] {
+div[class*='date-time_']:hover div[class*='time-minutes_'],
+div[class*='date-time_']:hover div[class*='time-period_'] {
     opacity: 1 !important;
 }
 `;
