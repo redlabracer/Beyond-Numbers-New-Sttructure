@@ -25,12 +25,15 @@ const HIDE_POP_CSS = `
 
 const HIDE_DEMAND_CSS = `
 div[class*='city-info-field_'] > div[class*='field-new_'] > svg,
+div[class*='city-info-field_'] > div[class*='field_'] > svg,
 div[class*='container_'] > div[class*='field_'] > div[class*='content_'] > svg {
     opacity: 0 !important;
     transition: opacity 0.3s ease-in-out;
 }
 
 div[class*='city-info-field_']:hover > div[class*='field-new_'] > svg,
+div[class*='city-info-field_']:hover > div[class*='field_'] > svg,
+div[class*='city-info-field_'] > div[class*='field_']:hover > svg,
 div[class*='container_'] > div[class*='field_']:hover > div[class*='content_'] > svg {
     opacity: 1 !important;
 }
@@ -42,7 +45,7 @@ div[class*='time-colon_'],
 div[class*='time-minutes_'],
 div[class*='time-period_'] {
     opacity: 0 !important;
-    transition
+    transition: opacity 0.3s ease-in-out;
 }
 
 div[class*='date-time_']:hover div[class*='time-hours_'],
