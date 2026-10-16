@@ -26,8 +26,7 @@ namespace Beyond_Numbers_with_STT
 
             m_Setting.RegisterInOptionsUI();
 
-            GameManager.instance.localizationManager.AddSource("en-US", new LocaleEN(m_Setting));
-            GameManager.instance.localizationManager.AddSource("de-DE", new LocaleDE(m_Setting));
+            LocaleLoader.Register(m_Setting);
 
             AssetDatabase.global.LoadSettings(nameof(Beyond_Numbers_with_STT), m_Setting, new Setting(this));
 

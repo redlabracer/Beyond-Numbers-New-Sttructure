@@ -2,6 +2,7 @@ import { ModRegistrar } from "cs2/modding";
 import { StatFieldTrendExtension } from "mods/toolbar-trend";
 import { DescriptionTooltipExtension } from "mods/description-tooltip-extension";
 import HideInjector from "mods/hide-injector";
+import { VisibilityMenuButton, VisibilityPanel, TopLeftMenuButton, TopRightMenuButton } from "mods/visibility-panel";
 
 const STAT_FIELD_MODULE = "game-ui/game/components/toolbar/components/stat-field/stat-field.tsx";
 const STAT_FIELD_TREND_EXPORT = "StatFieldTrend";
@@ -14,6 +15,11 @@ const register: ModRegistrar = (moduleRegistry) => {
     moduleRegistry.extend(DESCRIPTION_TOOLTIP_MODULE, DESCRIPTION_TOOLTIP_EXPORT, DescriptionTooltipExtension);
 
     moduleRegistry.append("Game", HideInjector);
+
+    moduleRegistry.append("Game", VisibilityPanel);
+    moduleRegistry.append("UniversalModMenu", VisibilityMenuButton);
+    moduleRegistry.append("GameTopLeft", TopLeftMenuButton);
+    moduleRegistry.append("GameTopRight", TopRightMenuButton);
 };
 
 export default register;

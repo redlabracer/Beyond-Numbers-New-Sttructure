@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<Configurations>Debug;Release</Configurations>
@@ -76,6 +76,12 @@
 		<Reference Update="System.Data">
 			<Private>false</Private>
 		</Reference>
+	</ItemGroup>
+
+	<!-- Translations: lang\en-US.json is the Crowdin source file; every other lang\<locale>.json is managed by Crowdin. -->
+	<ItemGroup>
+		<None Remove="lang\*.json" />
+		<EmbeddedResource Include="lang\*.json" LogicalName="$(AssemblyName).l10n.%(Filename).json" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,6 @@
 using Colossal.UI.Binding;
+using Game.Settings;
+using System.Reflection;
 using Game.City;
 using Game.Simulation;
 using Unity.Entities;
@@ -22,6 +24,7 @@ namespace Beyond_Numbers_with_STT.Systems
         private ValueBinding<bool> b_hideDemand;
         private ValueBinding<bool> b_hideDate;
         private ValueBinding<bool> b_hideTime;
+        private ValueBinding<int> b_buttonLocation;
 
         private ValueBinding<bool> b_showMoneyTrendHourly;
         private ValueBinding<bool> b_showMoneyTrendMonthly;
@@ -87,6 +90,12 @@ namespace Beyond_Numbers_with_STT.Systems
             AddBinding(b_hideDate       = new ValueBinding<bool>(GroupName, "hideDate",       Mod.m_Setting?.HideDate       ?? false));
             AddBinding(b_hideTime       = new ValueBinding<bool>(GroupName, "hideTime",       Mod.m_Setting?.HideTime       ?? false));
 
+            AddBinding(b_buttonLocation = new ValueBinding<int>(GroupName, "buttonLocation", (int)(Mod.m_Setting?.ButtonLocation ?? Setting.ButtonLocationOption.UniversalModMenu)));
+
+            AddBinding(new TriggerBinding<string, bool>(GroupName, "setOption", OnSetOption));
+            AddBinding(new ValueBinding<string>(GroupName, "optionLabelFormat", Mod.m_Setting?.GetOptionLabelLocaleID("{0}") ?? string.Empty));
+            AddBinding(new ValueBinding<string>(GroupName, "optionDescFormat",  Mod.m_Setting?.GetOptionDescLocaleID("{0}")  ?? string.Empty));
+
             AddBinding(b_showMoneyTrendHourly  = new ValueBinding<bool>(GroupName, "showMoneyTrendHourly",  Mod.m_Setting?.EffectiveShowMoneyTrendHourly  ?? true));
             AddBinding(b_showMoneyTrendMonthly = new ValueBinding<bool>(GroupName, "showMoneyTrendMonthly", Mod.m_Setting?.EffectiveShowMoneyTrendMonthly ?? false));
             AddBinding(b_showPopTrendHourly    = new ValueBinding<bool>(GroupName, "showPopTrendHourly",    Mod.m_Setting?.EffectiveShowPopTrendHourly    ?? true));
@@ -151,6 +160,7 @@ namespace Beyond_Numbers_with_STT.Systems
             b_hideDemand    .Update(Mod.m_Setting.HideDemand);
             b_hideDate      .Update(Mod.m_Setting.HideDate);
             b_hideTime      .Update(Mod.m_Setting.HideTime);
+            b_buttonLocation.Update((int)Mod.m_Setting.ButtonLocation);
             Profiler.EndSample();
 
             // Nested sample: trend toggles.
@@ -249,6 +259,21 @@ namespace Beyond_Numbers_with_STT.Systems
             {
                 Profiler.EndSample();
             }
+        }
+
+        private void OnSetOption(string propertyName, bool value)
+        {
+            var setting = Mod.m_Setting;
+            if (setting == null || string.IsNullOrEmpty(propertyName))
+                return;
+
+            var property = typeof(Setting).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+            if (property == null || property.PropertyType != typeof(bool) || !property.CanWrite ||
+                !property.IsDefined(typeof(SettingsUISectionAttribute), true))
+                return;
+
+            property.SetValue(setting, value);
+            setting.ApplyAndSave();
         }
 
         private int GetDaysPerYear()
