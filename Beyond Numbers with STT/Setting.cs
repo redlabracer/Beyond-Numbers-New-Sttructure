@@ -6,11 +6,19 @@ using Game.Settings;
 namespace Beyond_Numbers_with_STT
 {
     [FileLocation("ModsSettings/Beyond_Numbers/Beyond_Numbers")]
-    [SettingsUIGroupOrder(kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
-    [SettingsUIShowGroupName(kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
+    [SettingsUIGroupOrder(kPanelGroup, kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
+    [SettingsUIShowGroupName(kPanelGroup, kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
     public class Setting : ModSetting
     {
+        public enum ButtonLocationOption
+        {
+            UniversalModMenu,
+            TopLeft,
+            TopRight,
+        }
+
         public const string kSection = "Main";
+        public const string kPanelGroup = "Panel";
         public const string kVisibilityGroup = "Visibility";
         public const string kTrendGroup = "Trends";
         public const string kTooltipGroup = "MoneyTooltip";
@@ -23,6 +31,8 @@ namespace Beyond_Numbers_with_STT
 
         public override void SetDefaults()
         {
+            ButtonLocation = ButtonLocationOption.UniversalModMenu;
+
             HidePopulation = false;
             HideDemand = false;
             HideDate = false;
@@ -104,6 +114,15 @@ namespace Beyond_Numbers_with_STT
         internal bool EffectivePopTooltipUnemployment => EffectiveEnablePopTooltip && PopTooltipUnemployment;
         internal bool EffectivePopTooltipHomeless => EffectiveEnablePopTooltip && PopTooltipHomeless;
         internal bool EffectivePopTooltipHomelessRate => EffectiveEnablePopTooltip && PopTooltipHomelessRate;
+
+        // ----- Panel -----
+        [SettingsUISection(kSection, kPanelGroup)]
+        public ButtonLocationOption ButtonLocation
+        {
+            get => m_ButtonLocation;
+            set { m_ButtonLocation = value; Mod.PushBindings(); }
+        }
+        private ButtonLocationOption m_ButtonLocation;
 
         // ----- Visibility -----
         [SettingsUISection(kSection, kVisibilityGroup)]
