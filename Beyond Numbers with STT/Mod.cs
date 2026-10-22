@@ -45,6 +45,8 @@ namespace Beyond_Numbers_with_STT
                 m_Setting.UnregisterInOptionsUI();
                 m_Setting = null;
             }
+
+            Compatibility.CwdCompatibility.Shutdown();
         }
 
         public static void PushBindings()
