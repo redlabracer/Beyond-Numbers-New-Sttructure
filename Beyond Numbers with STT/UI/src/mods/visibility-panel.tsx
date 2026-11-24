@@ -12,6 +12,7 @@ const TABS_MODULE = "game-ui/common/tabs/tabs.tsx";
 
 const optionLabelFormat$ = bindValue<string>(GROUP, "optionLabelFormat", "");
 const optionDescFormat$ = bindValue<string>(GROUP, "optionDescFormat", "");
+const togglePanelRequested$ = bindValue<boolean>(GROUP, "togglePanelRequested", false);
 
 const Checkbox: React.FC<{ checked?: boolean; onChange?: (value: boolean) => void }> =
     getModule("game-ui/common/input/toggle/checkbox/checkbox.tsx", "Checkbox");
@@ -66,6 +67,7 @@ const TABS: TabDef[] = [
             { property: "HideDemand", binding: s.hideDemand$, fallback: "Hide Demand Bars" },
             { property: "HideDate", binding: s.hideDate$, fallback: "Hide Date" },
             { property: "HideTime", binding: s.hideTime$, fallback: "Hide Time" },
+            { property: "CompactNumbers", binding: s.compactNumbers$, fallback: "Compact Number Format" },
         ],
     },
     {
@@ -109,6 +111,17 @@ const TABS: TabDef[] = [
             { property: "PopTooltipUnemployment", binding: s.popTooltipUnemployment$, fallback: "Unemployment" },
             { property: "PopTooltipHomeless", binding: s.popTooltipHomeless$, fallback: "Homeless" },
             { property: "PopTooltipHomelessRate", binding: s.popTooltipHomelessRate$, fallback: "Homeless Rate" },
+        ],
+    },
+    {
+        id: "DemandTooltip",
+        fallback: "Demand Tooltip",
+        blockedByCityWatchdog: false,
+        master: { property: "EnableDemandTooltip", binding: s.enableDemandTooltip$, fallback: "Enable Demand Tooltip" },
+        options: [
+            { property: "DemandTooltipDemandValues", binding: s.demandTooltipDemandValues$, fallback: "Demand Values" },
+            { property: "DemandTooltipFactors", binding: s.demandTooltipFactors$, fallback: "Demand Factors" },
+            { property: "DemandTooltipFactorWeights", binding: s.demandTooltipFactorWeights$, fallback: "Factor Weights" },
         ],
     },
 ];
@@ -240,6 +253,14 @@ export const VisibilityPanel: React.FC = () => {
     const { translate } = useLocalization();
     const open = usePanelOpen();
     const [selectedTab, setSelectedTab] = useState(TABS[0].id);
+    const toggleRequested = useValue(togglePanelRequested$);
+
+    useEffect(() => {
+        if (toggleRequested) {
+            trigger(GROUP, "togglePanelHandled");
+            setPanelOpen(!panelOpen);
+        }
+    }, [toggleRequested]);
 
     if (!open) {
         return null;
@@ -250,7 +271,7 @@ export const VisibilityPanel: React.FC = () => {
     return (
         <DraggablePanel
             initialPosition={{ x: 0.8, y: 0.3 }}
-            style={{ width: "600rem" }}
+            style={{ width: "800rem" }}
             theme={iceflakeTheme}
             header={
                 <div style={{ width: "100%", overflow: "hidden" }}>

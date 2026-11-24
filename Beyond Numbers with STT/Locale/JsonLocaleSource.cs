@@ -18,7 +18,10 @@ namespace Beyond_Numbers_with_STT
         private const string kGroupPrefix = "Options.GROUP:";
         private const string kOptionPrefix = "Options.OPTION:";
         private const string kOptionDescPrefix = "Options.OPTION_DESCRIPTION:";
+        private const string kOptionWarningPrefix = "Options.WARNING:";
         private const string kEnumPrefix = "Options.ENUM:";
+        private const string kBindingPrefix = "Options.BINDING:";
+        private const string kInputMapKey = "Options.INPUT_MAP";
         private const string kPackedPrefix = "Options.";
 
         private static readonly MethodInfo s_GetEnumValueLocaleID =
@@ -76,6 +79,11 @@ namespace Beyond_Numbers_with_STT
                 return setting.GetOptionDescLocaleID(RequireProperty(key, kOptionDescPrefix));
             }
 
+            if (key.StartsWith(kOptionWarningPrefix, StringComparison.Ordinal))
+            {
+                return setting.GetOptionWarningLocaleID(RequireProperty(key, kOptionWarningPrefix));
+            }
+
             if (key.StartsWith(kOptionPrefix, StringComparison.Ordinal))
             {
                 return setting.GetOptionLabelLocaleID(RequireProperty(key, kOptionPrefix));
@@ -84,6 +92,22 @@ namespace Beyond_Numbers_with_STT
             if (key.StartsWith(kEnumPrefix, StringComparison.Ordinal))
             {
                 return ExpandEnumKey(key, setting);
+            }
+
+            if (key == kInputMapKey)
+            {
+                return setting.GetBindingMapLocaleID();
+            }
+
+            if (key.StartsWith(kBindingPrefix, StringComparison.Ordinal))
+            {
+                var actionName = key.Substring(kBindingPrefix.Length);
+                if (Array.IndexOf(Setting.kKeyBindingActions, actionName) < 0)
+                {
+                    throw new InvalidDataException($"Locale key '{key}' references unknown key binding action '{actionName}'.");
+                }
+
+                return setting.GetBindingKeyLocaleID(actionName);
             }
 
             // A packed "Options.*:" key that matched none of the arms above is a typo.

@@ -9,8 +9,8 @@ import {
     showPopTrendMonthly$,
     daysPerYear$,
     hourlyToMonthly,
-    formatNumber,
 } from "../settings";
+import { useNumberFormatter } from "../number-format";
 
 const MONEY_ICON = "Media/Game/Icons/Money.svg";
 const POPULATION_ICON = "Media/Game/Icons/Citizen.svg";
@@ -90,6 +90,8 @@ const TrendAmount = ({
     readonly showMonthly: boolean;
     readonly daysPerYear: number;
 }) => {
+    const format = useNumberFormatter();
+
     if (!showHourly && !showMonthly) {
         return null;
     }
@@ -101,7 +103,7 @@ const TrendAmount = ({
         <>
             {showHourly && (
                 <div className={sign} style={{ marginLeft: "4rem" }}>
-                    {`${withSign(delta)} /h`}
+                    {`${format.signed(delta)} /h`}
                 </div>
             )}
             {showHourly && showMonthly && (
@@ -109,17 +111,11 @@ const TrendAmount = ({
             )}
             {showMonthly && (
                 <div className={sign} style={{ marginLeft: "4rem" }}>
-                    {`${withSign(monthly)} /M`}
+                    {`${format.signed(monthly)} /M`}
                 </div>
             )}
         </>
     );
-};
-
-const withSign = (value: number): string => {
-    const rounded = Math.round(value);
-    const prefix = rounded > 0 ? "+" : rounded < 0 ? "-" : "";
-    return `${prefix}${formatNumber(value)}`;
 };
 
 const appendChild = (element: ReactElement<any>, child: ReactNode): ReactElement<any> => {

@@ -1,13 +1,15 @@
 using Beyond_Numbers_with_STT.Compatibility;
 using Colossal.IO.AssetDatabase;
+using Game.Input;
 using Game.Modding;
 using Game.Settings;
 
 namespace Beyond_Numbers_with_STT
 {
     [FileLocation("ModsSettings/Beyond_Numbers/Beyond_Numbers")]
-    [SettingsUIGroupOrder(kPanelGroup, kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
-    [SettingsUIShowGroupName(kPanelGroup, kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup)]
+    [SettingsUIKeyboardAction(kToggleSettingsPanelAction, ActionType.Button)]
+    [SettingsUIGroupOrder(kPanelGroup, kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup, kDemandTooltipGroup)]
+    [SettingsUIShowGroupName(kPanelGroup, kVisibilityGroup, kTrendGroup, kTooltipGroup, kPopTooltipGroup, kDemandTooltipGroup)]
     public class Setting : ModSetting
     {
         public enum ButtonLocationOption
@@ -23,6 +25,10 @@ namespace Beyond_Numbers_with_STT
         public const string kTrendGroup = "Trends";
         public const string kTooltipGroup = "MoneyTooltip";
         public const string kPopTooltipGroup = "PopulationTooltip";
+        public const string kDemandTooltipGroup = "DemandTooltip";
+
+        public const string kToggleSettingsPanelAction = "ToggleSettingsPanel";
+        internal static readonly string[] kKeyBindingActions = { kToggleSettingsPanelAction };
 
         public Setting(IMod mod) : base(mod)
         {
@@ -37,6 +43,7 @@ namespace Beyond_Numbers_with_STT
             HideDemand = false;
             HideDate = false;
             HideTime = false;
+            CompactNumbers = true;
 
             ShowMoneyTrendHourly = true;
             ShowMoneyTrendMonthly = false;
@@ -62,6 +69,11 @@ namespace Beyond_Numbers_with_STT
             PopTooltipUnemployment = true;
             PopTooltipHomeless = true;
             PopTooltipHomelessRate = true;
+
+            EnableDemandTooltip = true;
+            DemandTooltipDemandValues = true;
+            DemandTooltipFactors = true;
+            DemandTooltipFactorWeights = false;
         }
 
         // ----- City Watchdog compatibility -----
@@ -115,6 +127,16 @@ namespace Beyond_Numbers_with_STT
         internal bool EffectivePopTooltipHomeless => EffectiveEnablePopTooltip && PopTooltipHomeless;
         internal bool EffectivePopTooltipHomelessRate => EffectiveEnablePopTooltip && PopTooltipHomelessRate;
 
+        // City Watchdog does not touch the demand bars, so this tooltip is never forced off.
+        public bool ShouldHideDemandTooltipChildOptions()
+        {
+            return !EnableDemandTooltip;
+        }
+
+        internal bool EffectiveDemandTooltipDemandValues => EnableDemandTooltip && DemandTooltipDemandValues;
+        internal bool EffectiveDemandTooltipFactors => EnableDemandTooltip && DemandTooltipFactors;
+        internal bool EffectiveDemandTooltipFactorWeights => EnableDemandTooltip && DemandTooltipFactorWeights;
+
         // ----- Panel -----
         [SettingsUISection(kSection, kPanelGroup)]
         public ButtonLocationOption ButtonLocation
@@ -123,6 +145,18 @@ namespace Beyond_Numbers_with_STT
             set { m_ButtonLocation = value; Mod.PushBindings(); }
         }
         private ButtonLocationOption m_ButtonLocation;
+
+        [SettingsUISection(kSection, kPanelGroup)]
+        [SettingsUIKeyboardBinding(BindingKeyboard.B, kToggleSettingsPanelAction, ctrl: true)]
+        public ProxyBinding ToggleSettingsPanelBinding { get; set; }
+
+        [SettingsUISection(kSection, kPanelGroup)]
+        [SettingsUIButton]
+        [SettingsUIConfirmation]
+        public bool ResetKeyBindingsButton
+        {
+            set { ResetKeyBindings(); }
+        }
 
         // ----- Visibility -----
         [SettingsUISection(kSection, kVisibilityGroup)]
@@ -156,6 +190,15 @@ namespace Beyond_Numbers_with_STT
             set { m_HideTime = value; Mod.PushBindings(); }
         }
         private bool m_HideTime;
+
+        // Shortens Beyond's own numbers from one million upwards (e.g. 1.5M, 2.3B).
+        [SettingsUISection(kSection, kVisibilityGroup)]
+        public bool CompactNumbers
+        {
+            get => m_CompactNumbers;
+            set { m_CompactNumbers = value; Mod.PushBindings(); }
+        }
+        private bool m_CompactNumbers;
 
         // ----- Trends -----
         [SettingsUISection(kSection, kTrendGroup)]
@@ -357,5 +400,41 @@ namespace Beyond_Numbers_with_STT
             set { m_PopTooltipHomelessRate = value; Mod.PushBindings(); }
         }
         private bool m_PopTooltipHomelessRate;
+
+        // ----- Demand Tooltip -----
+        [SettingsUISection(kSection, kDemandTooltipGroup)]
+        public bool EnableDemandTooltip
+        {
+            get => m_EnableDemandTooltip;
+            set { m_EnableDemandTooltip = value; Mod.PushBindings(); }
+        }
+        private bool m_EnableDemandTooltip;
+
+        [SettingsUISection(kSection, kDemandTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHideDemandTooltipChildOptions))]
+        public bool DemandTooltipDemandValues
+        {
+            get => m_DemandTooltipDemandValues;
+            set { m_DemandTooltipDemandValues = value; Mod.PushBindings(); }
+        }
+        private bool m_DemandTooltipDemandValues;
+
+        [SettingsUISection(kSection, kDemandTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHideDemandTooltipChildOptions))]
+        public bool DemandTooltipFactors
+        {
+            get => m_DemandTooltipFactors;
+            set { m_DemandTooltipFactors = value; Mod.PushBindings(); }
+        }
+        private bool m_DemandTooltipFactors;
+
+        [SettingsUISection(kSection, kDemandTooltipGroup)]
+        [SettingsUIHideByCondition(typeof(Setting), nameof(ShouldHideDemandTooltipChildOptions))]
+        public bool DemandTooltipFactorWeights
+        {
+            get => m_DemandTooltipFactorWeights;
+            set { m_DemandTooltipFactorWeights = value; Mod.PushBindings(); }
+        }
+        private bool m_DemandTooltipFactorWeights;
     }
 }

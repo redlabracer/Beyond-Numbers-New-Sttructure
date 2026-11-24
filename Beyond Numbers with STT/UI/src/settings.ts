@@ -5,6 +5,7 @@ export const hidePopulation$ = bindValue<boolean>(GROUP, "hidePopulation", false
 export const hideDemand$     = bindValue<boolean>(GROUP, "hideDemand",     false);
 export const hideDate$       = bindValue<boolean>(GROUP, "hideDate",       false);
 export const hideTime$       = bindValue<boolean>(GROUP, "hideTime",       false);
+export const compactNumbers$ = bindValue<boolean>(GROUP, "compactNumbers", true);
 
 export const showMoneyTrendHourly$  = bindValue<boolean>(GROUP, "showMoneyTrendHourly",  true);
 export const showMoneyTrendMonthly$ = bindValue<boolean>(GROUP, "showMoneyTrendMonthly", false);
@@ -31,6 +32,11 @@ export const popTooltipUnemployment$ = bindValue<boolean>(GROUP, "popTooltipUnem
 export const popTooltipHomeless$     = bindValue<boolean>(GROUP, "popTooltipHomeless",     true);
 export const popTooltipHomelessRate$ = bindValue<boolean>(GROUP, "popTooltipHomelessRate", true);
 
+export const enableDemandTooltip$        = bindValue<boolean>(GROUP, "enableDemandTooltip",        true);
+export const demandTooltipDemandValues$  = bindValue<boolean>(GROUP, "demandTooltipDemandValues",  true);
+export const demandTooltipFactors$       = bindValue<boolean>(GROUP, "demandTooltipFactors",       true);
+export const demandTooltipFactorWeights$ = bindValue<boolean>(GROUP, "demandTooltipFactorWeights", false);
+
 export const cityWatchdogInstalled$ = bindValue<boolean>(GROUP, "cityWatchdogInstalled", false);
 
 export const daysPerYear$ = bindValue<number>(GROUP, "daysPerYear", 365);
@@ -54,9 +60,4 @@ export function hourlyToMonthly(hourly: number, _daysPerYear?: number): number {
 
 export function monthlyToHourly(monthly: number): number {
     return monthly / HOURS_PER_MONTH;
-}
-
-export function formatNumber(value: number): string {
-    const rounded = Math.round(value);
-    return Math.abs(rounded).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

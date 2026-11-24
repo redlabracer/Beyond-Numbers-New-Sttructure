@@ -25,6 +25,7 @@ namespace Beyond_Numbers_with_STT
             m_Setting = new Setting(this);
 
             m_Setting.RegisterInOptionsUI();
+            m_Setting.RegisterKeyBindings();
 
             LocaleLoader.Register(m_Setting);
 

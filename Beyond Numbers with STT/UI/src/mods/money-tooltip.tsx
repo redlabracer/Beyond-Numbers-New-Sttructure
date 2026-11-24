@@ -9,9 +9,9 @@ import {
     showTooltipHourlyValues$,
     showTooltipMonthlyValues$,
     monthlyToHourly,
-    formatNumber,
 } from "../settings";
-import { Row, Section, tone, withSign, POSITIVE_COLOR, NEGATIVE_COLOR } from "./tooltip-shared";
+import { useNumberFormatter } from "../number-format";
+import { Row, Section, tone, POSITIVE_COLOR, NEGATIVE_COLOR } from "./tooltip-shared";
 
 export const MoneyTooltipRows = () => {
     const enabled = useValue(enableMoneyTooltip$);
@@ -22,6 +22,7 @@ export const MoneyTooltipRows = () => {
     const showMonthly = useValue(showTooltipMonthlyValues$);
     const income = useValue(economyBudget.totalIncome$);
     const expense = useValue(economyBudget.totalExpenses$);
+    const format = useNumberFormatter();
 
     if (!enabled) {
         return null;
@@ -35,19 +36,19 @@ export const MoneyTooltipRows = () => {
 
     const rows: ReactNode[] = [];
     if (showNet && showMonthly) {
-        rows.push(<Row key="net-m" label="Current monthly trend:" value={`${withSign(netM)} /M`} color={tone(netM)} />);
+        rows.push(<Row key="net-m" label="Current monthly trend:" value={`${format.signed(netM)} /M`} color={tone(netM)} />);
     }
     if (showIncome && showMonthly) {
-        rows.push(<Row key="inc-m" label="Current monthly income:" value={`${withSign(incomeM)} /M`} color={POSITIVE_COLOR} />);
+        rows.push(<Row key="inc-m" label="Current monthly income:" value={`${format.signed(incomeM)} /M`} color={POSITIVE_COLOR} />);
     }
     if (showExpense && showMonthly) {
-        rows.push(<Row key="exp-m" label="Current monthly expenses:" value={`-${formatNumber(expenseM)} /M`} color={NEGATIVE_COLOR} />);
+        rows.push(<Row key="exp-m" label="Current monthly expenses:" value={`-${format.magnitude(expenseM)} /M`} color={NEGATIVE_COLOR} />);
     }
     if (showHourly && showIncome) {
-        rows.push(<Row key="inc-h" label="Current hourly income:" value={`${withSign(incomeH)} /h`} color={POSITIVE_COLOR} />);
+        rows.push(<Row key="inc-h" label="Current hourly income:" value={`${format.signed(incomeH)} /h`} color={POSITIVE_COLOR} />);
     }
     if (showHourly && showExpense) {
-        rows.push(<Row key="exp-h" label="Current hourly expenses:" value={`-${formatNumber(expenseH)} /h`} color={NEGATIVE_COLOR} />);
+        rows.push(<Row key="exp-h" label="Current hourly expenses:" value={`-${format.magnitude(expenseH)} /h`} color={NEGATIVE_COLOR} />);
     }
 
     return <Section>{rows}</Section>;

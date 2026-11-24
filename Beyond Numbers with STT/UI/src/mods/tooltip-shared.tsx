@@ -1,5 +1,4 @@
 import { Children, isValidElement, type ReactNode } from "react";
-import { formatNumber } from "../settings";
 
 export const POSITIVE_COLOR = "#6dd06d";
 export const NEGATIVE_COLOR = "#e26b6b";
@@ -33,12 +32,6 @@ export const Row = ({ label, value, color }: { readonly label: string; readonly 
 };
 
 export const tone = (n: number): string => (n < 0 ? NEGATIVE_COLOR : POSITIVE_COLOR);
-
-export const withSign = (value: number): string => {
-    const rounded = Math.round(value);
-    const prefix = rounded > 0 ? "+" : rounded < 0 ? "-" : "";
-    return `${prefix}${formatNumber(value)}`;
-};
 
 export const formatPercent = (value: number): string => (Math.round(value * 10) / 10).toFixed(1);
 

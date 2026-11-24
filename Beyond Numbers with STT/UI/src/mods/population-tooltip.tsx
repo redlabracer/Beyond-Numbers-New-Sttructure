@@ -16,7 +16,6 @@ import {
     popTooltipHomelessRate$,
     daysPerYear$,
     hourlyToMonthly,
-    formatNumber,
     popPopulation$,
     popBirthRate$,
     popDeathRate$,
@@ -28,7 +27,8 @@ import {
     popHomeless$,
     popHomelessRate$,
 } from "../settings";
-import { Row, Section, tone, withSign, formatPercent, POSITIVE_COLOR, NEGATIVE_COLOR, NEUTRAL_COLOR } from "./tooltip-shared";
+import { useNumberFormatter } from "../number-format";
+import { Row, Section, tone, formatPercent, POSITIVE_COLOR, NEGATIVE_COLOR, NEUTRAL_COLOR } from "./tooltip-shared";
 
 export const PopulationTooltipRows = () => {
     const enabled = useValue(enablePopTooltip$);
@@ -56,6 +56,7 @@ export const PopulationTooltipRows = () => {
     const unemployment = useValue(popUnemployment$);
     const homeless = useValue(popHomeless$);
     const homelessRate = useValue(popHomelessRate$);
+    const format = useNumberFormatter();
 
     if (!enabled) {
         return null;
@@ -64,16 +65,16 @@ export const PopulationTooltipRows = () => {
     const monthly = hourlyToMonthly(delta, daysPerYear);
 
     const rows: ReactNode[] = [];
-    if (showTrend) rows.push(<Row key="trend" label="Current monthly trend:" value={`${withSign(monthly)} /M`} color={tone(monthly)} />);
-    if (showPopulation) rows.push(<Row key="pop" label="Population:" value={formatNumber(population)} color={NEUTRAL_COLOR} />);
-    if (showBirthRate) rows.push(<Row key="birth" label="Birth rate:" value={`${withSign(birthRate)} /M`} color={POSITIVE_COLOR} />);
-    if (showDeathRate) rows.push(<Row key="death" label="Death rate:" value={`${deathRate > 0 ? "-" : ""}${formatNumber(deathRate)} /M`} color={NEGATIVE_COLOR} />);
-    if (showMovedIn) rows.push(<Row key="in" label="Moved in:" value={`${withSign(movedIn)} /M`} color={POSITIVE_COLOR} />);
-    if (showMovedAway) rows.push(<Row key="away" label="Moved away:" value={`${movedAway > 0 ? "-" : ""}${formatNumber(movedAway)} /M`} color={NEGATIVE_COLOR} />);
-    if (showJobs) rows.push(<Row key="jobs" label="Jobs:" value={formatNumber(jobs)} color={NEUTRAL_COLOR} />);
-    if (showEmployed) rows.push(<Row key="emp" label="Employed:" value={formatNumber(employed)} color={NEUTRAL_COLOR} />);
+    if (showTrend) rows.push(<Row key="trend" label="Current monthly trend:" value={`${format.signed(monthly)} /M`} color={tone(monthly)} />);
+    if (showPopulation) rows.push(<Row key="pop" label="Population:" value={format.magnitude(population)} color={NEUTRAL_COLOR} />);
+    if (showBirthRate) rows.push(<Row key="birth" label="Birth rate:" value={`${format.signed(birthRate)} /M`} color={POSITIVE_COLOR} />);
+    if (showDeathRate) rows.push(<Row key="death" label="Death rate:" value={`${deathRate > 0 ? "-" : ""}${format.magnitude(deathRate)} /M`} color={NEGATIVE_COLOR} />);
+    if (showMovedIn) rows.push(<Row key="in" label="Moved in:" value={`${format.signed(movedIn)} /M`} color={POSITIVE_COLOR} />);
+    if (showMovedAway) rows.push(<Row key="away" label="Moved away:" value={`${movedAway > 0 ? "-" : ""}${format.magnitude(movedAway)} /M`} color={NEGATIVE_COLOR} />);
+    if (showJobs) rows.push(<Row key="jobs" label="Jobs:" value={format.magnitude(jobs)} color={NEUTRAL_COLOR} />);
+    if (showEmployed) rows.push(<Row key="emp" label="Employed:" value={format.magnitude(employed)} color={NEUTRAL_COLOR} />);
     if (showUnemployment) rows.push(<Row key="unemp" label="Unemployment:" value={`${formatPercent(unemployment)} %`} color={NEUTRAL_COLOR} />);
-    if (showHomeless) rows.push(<Row key="hl" label="Homeless:" value={formatNumber(homeless)} color={homeless > 0 ? NEGATIVE_COLOR : NEUTRAL_COLOR} />);
+    if (showHomeless) rows.push(<Row key="hl" label="Homeless:" value={format.magnitude(homeless)} color={homeless > 0 ? NEGATIVE_COLOR : NEUTRAL_COLOR} />);
     if (showHomelessRate) rows.push(<Row key="hlr" label="Homeless rate:" value={`${formatPercent(homelessRate)} %`} color={homelessRate > 0 ? NEGATIVE_COLOR : NEUTRAL_COLOR} />);
 
     if (rows.length === 0) {

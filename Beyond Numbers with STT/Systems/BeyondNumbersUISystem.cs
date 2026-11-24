@@ -1,4 +1,7 @@
+using Colossal.Serialization.Entities;
 using Colossal.UI.Binding;
+using Game;
+using Game.Input;
 using Game.Settings;
 using System.Reflection;
 using Game.City;
@@ -24,7 +27,11 @@ namespace Beyond_Numbers_with_STT.Systems
         private ValueBinding<bool> b_hideDemand;
         private ValueBinding<bool> b_hideDate;
         private ValueBinding<bool> b_hideTime;
+        private ValueBinding<bool> b_compactNumbers;
         private ValueBinding<int> b_buttonLocation;
+
+        private ProxyAction m_TogglePanelAction;
+        private ValueBinding<bool> b_togglePanelRequested;
 
         private ValueBinding<bool> b_showMoneyTrendHourly;
         private ValueBinding<bool> b_showMoneyTrendMonthly;
@@ -50,6 +57,11 @@ namespace Beyond_Numbers_with_STT.Systems
         private ValueBinding<bool> b_popTooltipUnemployment;
         private ValueBinding<bool> b_popTooltipHomeless;
         private ValueBinding<bool> b_popTooltipHomelessRate;
+
+        private ValueBinding<bool> b_enableDemandTooltip;
+        private ValueBinding<bool> b_demandTooltipDemandValues;
+        private ValueBinding<bool> b_demandTooltipFactors;
+        private ValueBinding<bool> b_demandTooltipFactorWeights;
 
         private ValueBinding<bool> b_cityWatchdogInstalled;
 
@@ -89,8 +101,14 @@ namespace Beyond_Numbers_with_STT.Systems
             AddBinding(b_hideDemand     = new ValueBinding<bool>(GroupName, "hideDemand",     Mod.m_Setting?.HideDemand     ?? false));
             AddBinding(b_hideDate       = new ValueBinding<bool>(GroupName, "hideDate",       Mod.m_Setting?.HideDate       ?? false));
             AddBinding(b_hideTime       = new ValueBinding<bool>(GroupName, "hideTime",       Mod.m_Setting?.HideTime       ?? false));
+            AddBinding(b_compactNumbers = new ValueBinding<bool>(GroupName, "compactNumbers", Mod.m_Setting?.CompactNumbers ?? true));
 
             AddBinding(b_buttonLocation = new ValueBinding<int>(GroupName, "buttonLocation", (int)(Mod.m_Setting?.ButtonLocation ?? Setting.ButtonLocationOption.UniversalModMenu)));
+
+            // The UI acknowledges each request so a stale press never re-opens the panel later.
+            AddBinding(b_togglePanelRequested = new ValueBinding<bool>(GroupName, "togglePanelRequested", false));
+            AddBinding(new TriggerBinding(GroupName, "togglePanelHandled", () => b_togglePanelRequested.Update(false)));
+            m_TogglePanelAction = Mod.m_Setting?.GetAction(Setting.kToggleSettingsPanelAction);
 
             AddBinding(new TriggerBinding<string, bool>(GroupName, "setOption", OnSetOption));
             AddBinding(new ValueBinding<string>(GroupName, "optionLabelFormat", Mod.m_Setting?.GetOptionLabelLocaleID("{0}") ?? string.Empty));
@@ -120,6 +138,11 @@ namespace Beyond_Numbers_with_STT.Systems
             AddBinding(b_popTooltipUnemployment = new ValueBinding<bool>(GroupName, "popTooltipUnemployment", Mod.m_Setting?.EffectivePopTooltipUnemployment ?? true));
             AddBinding(b_popTooltipHomeless     = new ValueBinding<bool>(GroupName, "popTooltipHomeless",     Mod.m_Setting?.EffectivePopTooltipHomeless     ?? true));
             AddBinding(b_popTooltipHomelessRate = new ValueBinding<bool>(GroupName, "popTooltipHomelessRate", Mod.m_Setting?.EffectivePopTooltipHomelessRate ?? true));
+
+            AddBinding(b_enableDemandTooltip        = new ValueBinding<bool>(GroupName, "enableDemandTooltip",        Mod.m_Setting?.EnableDemandTooltip                 ?? true));
+            AddBinding(b_demandTooltipDemandValues  = new ValueBinding<bool>(GroupName, "demandTooltipDemandValues",  Mod.m_Setting?.EffectiveDemandTooltipDemandValues  ?? true));
+            AddBinding(b_demandTooltipFactors       = new ValueBinding<bool>(GroupName, "demandTooltipFactors",       Mod.m_Setting?.EffectiveDemandTooltipFactors       ?? true));
+            AddBinding(b_demandTooltipFactorWeights = new ValueBinding<bool>(GroupName, "demandTooltipFactorWeights", Mod.m_Setting?.EffectiveDemandTooltipFactorWeights ?? false));
 
             AddBinding(b_cityWatchdogInstalled = new ValueBinding<bool>(GroupName, "cityWatchdogInstalled", CwdCompatibility.IsCityWatchdogInstalled()));
             AddBinding(b_daysPerYear = new ValueBinding<int>(GroupName, "daysPerYear", GetDaysPerYear()));
@@ -160,6 +183,7 @@ namespace Beyond_Numbers_with_STT.Systems
             b_hideDemand    .Update(Mod.m_Setting.HideDemand);
             b_hideDate      .Update(Mod.m_Setting.HideDate);
             b_hideTime      .Update(Mod.m_Setting.HideTime);
+            b_compactNumbers.Update(Mod.m_Setting.CompactNumbers);
             b_buttonLocation.Update((int)Mod.m_Setting.ButtonLocation);
             Profiler.EndSample();
 
@@ -192,6 +216,11 @@ namespace Beyond_Numbers_with_STT.Systems
             b_popTooltipUnemployment.Update(Mod.m_Setting.EffectivePopTooltipUnemployment);
             b_popTooltipHomeless    .Update(Mod.m_Setting.EffectivePopTooltipHomeless);
             b_popTooltipHomelessRate.Update(Mod.m_Setting.EffectivePopTooltipHomelessRate);
+
+            b_enableDemandTooltip       .Update(Mod.m_Setting.EnableDemandTooltip);
+            b_demandTooltipDemandValues .Update(Mod.m_Setting.EffectiveDemandTooltipDemandValues);
+            b_demandTooltipFactors      .Update(Mod.m_Setting.EffectiveDemandTooltipFactors);
+            b_demandTooltipFactorWeights.Update(Mod.m_Setting.EffectiveDemandTooltipFactorWeights);
             Profiler.EndSample();
 
             b_cityWatchdogInstalled.Update(CwdCompatibility.IsCityWatchdogInstalled());
@@ -200,9 +229,27 @@ namespace Beyond_Numbers_with_STT.Systems
             Profiler.EndSample();
         }
 
+        protected override void OnGameLoadingComplete(Purpose purpose, GameMode mode)
+        {
+            base.OnGameLoadingComplete(purpose, mode);
+
+            // The panel only exists in-game, so the shortcut stays inactive elsewhere and never competes there.
+            if (m_TogglePanelAction != null)
+            {
+                m_TogglePanelAction.shouldBeEnabled = mode.IsGame();
+            }
+
+            b_togglePanelRequested.Update(false);
+        }
+
         protected override void OnUpdate()
         {
             base.OnUpdate();
+
+            if (m_TogglePanelAction != null && m_TogglePanelAction.WasPerformedThisFrame())
+            {
+                b_togglePanelRequested.Update(true);
+            }
 
             if (++m_PopStatsCounter >= PopStatsInterval)
             {

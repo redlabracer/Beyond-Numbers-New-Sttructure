@@ -31,6 +31,7 @@ Strings that are not translated yet fall back to English in-game.
 - Translate only the text. Keep words like **City Watchdog** and **Universal Mod Menu** as they are; they are names of other mods.
 - Keep the texts short; most of them are labels in the options screen or in a small in-game panel.
 - `Options.OPTION:<Name>` is the label of a setting, `Options.OPTION_DESCRIPTION:<Name>` is its tooltip.
+- `BeyondNumbers.NumberFormat.Million` / `Billion` / `Trillion` are the short forms used by the *Compact Number Format* setting. Keep the `{VALUE}` placeholder exactly as it is; it is replaced by the already localized number (e.g. German `{VALUE} Mio.` → `1,5 Mio.`).
 
 ## Notes for developers
 

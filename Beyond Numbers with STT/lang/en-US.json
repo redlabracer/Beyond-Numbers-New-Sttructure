@@ -8,11 +8,19 @@
   "Options.ENUM:ButtonLocationOption.UniversalModMenu": "Universal Mod Menu",
   "Options.ENUM:ButtonLocationOption.TopLeft": "Top Left",
   "Options.ENUM:ButtonLocationOption.TopRight": "Top Right",
+  "Options.OPTION:ToggleSettingsPanelBinding": "Toggle Settings Panel",
+  "Options.OPTION_DESCRIPTION:ToggleSettingsPanelBinding": "Keyboard shortcut that opens or closes the in-game Beyond Numbers settings panel. Default: Ctrl+B.",
+  "Options.OPTION:ResetKeyBindingsButton": "Reset Key Bindings",
+  "Options.OPTION_DESCRIPTION:ResetKeyBindingsButton": "Restores all Beyond Numbers keyboard shortcuts to their defaults.",
+  "Options.WARNING:ResetKeyBindingsButton": "Reset all Beyond Numbers keyboard shortcuts to their defaults?",
+  "Options.INPUT_MAP": "Beyond Numbers",
+  "Options.BINDING:ToggleSettingsPanel": "Toggle Settings Panel",
 
   "Options.GROUP:Visibility": "Visibility Settings",
   "Options.GROUP:Trends": "Money & Population Trends",
   "Options.GROUP:MoneyTooltip": "Detailed Money Tooltip",
   "Options.GROUP:PopulationTooltip": "Detailed Population Tooltip",
+  "Options.GROUP:DemandTooltip": "Demand Bar Tooltip",
 
   "Options.OPTION:HidePopulation": "Hide Population",
   "Options.OPTION_DESCRIPTION:HidePopulation": "Hides the population number until hovered.",
@@ -22,6 +30,12 @@
   "Options.OPTION_DESCRIPTION:HideDate": "Hides the in-game date / year until hovered.",
   "Options.OPTION:HideTime": "Hide Time",
   "Options.OPTION_DESCRIPTION:HideTime": "Hides the in-game clock time until hovered.",
+  "Options.OPTION:CompactNumbers": "Compact Number Format",
+  "Options.OPTION_DESCRIPTION:CompactNumbers": "Shortens large numbers in the Beyond Numbers trends and tooltips, e.g. 1,500,000 becomes 1.5M and 2,300,000,000 becomes 2.3B. Numbers below one million are always shown in full.",
+
+  "BeyondNumbers.NumberFormat.Million": "{VALUE}M",
+  "BeyondNumbers.NumberFormat.Billion": "{VALUE}B",
+  "BeyondNumbers.NumberFormat.Trillion": "{VALUE}T",
 
   "BeyondNumbers.VisibilityPanel.Title": "Beyond Numbers",
   "BeyondNumbers.VisibilityPanel.Button": "Beyond Numbers Settings",
@@ -29,6 +43,7 @@
   "BeyondNumbers.VisibilityPanel.Tab.Trends": "Trends",
   "BeyondNumbers.VisibilityPanel.Tab.MoneyTooltip": "Money Tooltip",
   "BeyondNumbers.VisibilityPanel.Tab.PopulationTooltip": "Population Tooltip",
+  "BeyondNumbers.VisibilityPanel.Tab.DemandTooltip": "Demand Tooltip",
   "BeyondNumbers.VisibilityPanel.CityWatchdog": "Disabled because City Watchdog is installed.",
   "BeyondNumbers.VisibilityPanel.HidePopulation": "Hide Population",
   "BeyondNumbers.VisibilityPanel.HideDemand": "Hide Demand Bars",
@@ -80,5 +95,14 @@
   "Options.OPTION:PopTooltipHomeless": "Tooltip: Show Homeless",
   "Options.OPTION_DESCRIPTION:PopTooltipHomeless": "Includes the number of homeless citizens in the tooltip.",
   "Options.OPTION:PopTooltipHomelessRate": "Tooltip: Show Homeless Rate",
-  "Options.OPTION_DESCRIPTION:PopTooltipHomelessRate": "Includes the homelessness rate in the tooltip."
+  "Options.OPTION_DESCRIPTION:PopTooltipHomelessRate": "Includes the homelessness rate in the tooltip.",
+
+  "Options.OPTION:EnableDemandTooltip": "Enable Demand Bar Tooltip",
+  "Options.OPTION_DESCRIPTION:EnableDemandTooltip": "When hovering the demand bars, shows the demand and demand factors of every zone type, just like the City Information panel.",
+  "Options.OPTION:DemandTooltipDemandValues": "Tooltip: Show Demand Values",
+  "Options.OPTION_DESCRIPTION:DemandTooltipDemandValues": "Shows the current demand of each zone type in percent.",
+  "Options.OPTION:DemandTooltipFactors": "Tooltip: Show Demand Factors",
+  "Options.OPTION_DESCRIPTION:DemandTooltipFactors": "Lists the strongest positive and negative demand factors of each zone type.",
+  "Options.OPTION:DemandTooltipFactorWeights": "Tooltip: Show Factor Weights",
+  "Options.OPTION_DESCRIPTION:DemandTooltipFactorWeights": "Shows the numeric weight of each demand factor next to its name."
 }
