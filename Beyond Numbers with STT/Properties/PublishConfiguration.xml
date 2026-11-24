@@ -4,7 +4,7 @@
 	<!--Name of the mod to display to players-->
 	<DisplayName Value="Beyond Numbers" />
 	<!--Short description of the mod-->
-	<ShortDescription Value="Hide different Ui elements, when not hovering over it. Now Includes Show Text Trend by DanielVNZ and New Tooltips for Money and Population" />
+	<ShortDescription Value="Hide different Ui elements, when not hovering over it. Now Includes Show Text Trend by DanielVNZ and New Tooltips for Money, Population and Demand" />
 	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 	<!--LongDescription Value="This is a long description" /-->
 	<LongDescription>
@@ -23,7 +23,12 @@ This helps reduce stress when building a detailed city, as the raw numbers are o
 - **Money Trend Overlay:** A similar overlay shows the trend of your city’s budget over time, so you stay informed without feeling pressured.
 - **Money Trend Tooltip:** Hovering over the money icon shows a tooltip with the monthly trend of your city’s budget.
 - **Show Text Trends integration:** The functionality of the “Show Text Trends” mod is now built directly into Beyond Numbers, combining both mods into one.
+- **Demand Bar Tooltip:** Hovering over the demand bars shows the demand and the strongest demand factors of every zone type.
+- **Compact Number Format:** Large numbers are shortened (e.g. 1.50M) and use the separators of your game language.
+- **In-game Settings Panel:** Change every setting in-game in a panel with tabs. Open it with the button or with Ctrl+B (can be changed).
 - **Fully configurable:** All overlays and hiding behaviors can be toggled independently in the mod settings.
+
+**Translations:** Beyond Numbers is translated on Crowdin. Help translate it into your language here: https://crowdin.com/project/beyond-numbers
 
 Special Thanks to DanielVNZ for who originally created the “Show Text Trends” mod, which has now been merged into Beyond Numbers.
 
@@ -46,7 +51,7 @@ Big thanks to Honu/River-mochi for helping me.
 	<!--Link to the forum post where the mod can be discussed-->
 	<ForumLink Value="https://forum.paradoxplaza.com/forum/threads/beyond-numbers-mod.1919446/" />
 	<!--Version of the mod-->
-	<ModVersion Value="26.10.1" />
+	<ModVersion Value="26.11.0" />
 	<!--Recommended version of the base game to use the mod-->
 	<GameVersion Value="1.6.*" />
 	<!--Dependency for the mod, can be set multiple times-->
@@ -55,27 +60,41 @@ Big thanks to Honu/River-mochi for helping me.
 	<!--<RequiredDLC Value="" />-->
 	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 	<ChangeLog>
-**New: Detailed Population Tooltip**
-- Hovering over the population now shows a full breakdown: monthly trend, population, birth rate, death rate, citizens moved in and away, jobs, employed citizens, unemployment, homeless citizens and homeless rate.
-- Every line can be switched on or off in the settings. A master switch turns the whole tooltip on or off at once.
+**New: Beyond Numbers Settings Panel**
+- All Beyond Numbers settings can now be changed in-game in a panel, without opening the options menu. Changes apply and save straight away.
+- The panel is split into tabs: Visibility, Trends, Money Tooltip, Population Tooltip and Demand Tooltip.
+- The button that opens the panel can sit in the Universal Mod Menu, at the top left or at the top right (new setting "Panel Button Location").
+- New keyboard shortcut to open and close the panel: Ctrl+B by default. You can change it in the settings, and "Reset Key Bindings" brings back the default. The shortcut only works in-game.
+- Settings that City Watchdog takes over are marked in the panel as disabled.
 
-**City Watchdog compatibility**
-- Beyond Numbers now detects City Watchdog. Its own trend displays and tooltips switch off automatically so nothing is shown twice, and settings that don't apply are hidden.
+**New: Demand Bar Tooltip**
+- Hovering over the demand bars now shows the demand and the demand factors of every zone type (residential low/medium/high, commercial, industrial, office), like the City Information panel does.
+- Each part can be switched on or off: demand values in percent, the strongest positive and negative demand factors, and the numeric weight of each factor (off by default).
+- A master switch turns the whole demand tooltip on or off at once.
+- Zone types that are still locked in your city are left out of the tooltip.
+- This tooltip also works when City Watchdog is installed, because City Watchdog doesn't change the demand bars.
+
+**New: Compact Number Format**
+- Large numbers in the Beyond Numbers trends and tooltips are shortened, e.g. 1,500,000 becomes 1.50M and 2,300,000,000 becomes 2.30B. Numbers below one million are always shown in full.
+- Numbers now use the separators of your game language (e.g. 1.234.567 in German).
+- Turned on by default. You can switch it off under Visibility.
+
+**New: Translations via Crowdin**
+- Beyond Numbers can now be translated on Crowdin into every language the game supports: German, Spanish, French, Italian, Japanese, Korean, Polish, Portuguese (Brazil), Russian, Chinese (Simplified) and Chinese (Traditional).
+- German is already included. Text that isn't translated yet is shown in English.
+- Anyone can help translate in the browser, no coding needed: https://crowdin.com/project/beyond-numbers
 
 **Improvements**
-- Rebuilt the mod's interface so it works more smoothly with the game's UI. Thanks to Honu/River-mochi for the tip!
-- ´Hide Time´ now also hides the AM/PM indicator.
-- New Mod Pictures for better showing of the mod's features in the screenshots.
+- City Watchdog detection is faster. It runs once instead of on every check, which saves work in the settings and the UI.
+- The settings panel is wider, so the longer option names fit.
 
 **Bug fixes**
-- Fixed settings sometimes not being saved between game sessions.
-- Fixed tooltips still showing extra information when City Watchdog was installed.
-- Fixed the UI integration with a more DOM free aproach
+- Fixed City Watchdog sometimes not being detected when it loaded after Beyond Numbers. Trends and tooltips could then show up twice.
 	</ChangeLog>
 	<!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "x", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 	<ExternalLink Type="github" Url="https://github.com/redlabracer/Beyond-Numbers-New-Sttructure" />
 	<ExternalLink Type="discord" Url="https://discord.com/channels/1024242828114673724/1499049893296078979" />
-	<ExternalLink Type="crowdin" Url="" />
+	<ExternalLink Type="crowdin" Url="https://crowdin.com/project/beyond-numbers" />
 	<!--Supported values Public, Private, Unlisted-->
 	<AccessLevel Value="Public" />
 </Publish>
