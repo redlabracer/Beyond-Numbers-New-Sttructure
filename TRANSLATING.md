@@ -1,7 +1,7 @@
 # Translating Beyond Numbers
 
-Translations are managed on **Crowdin**: <!-- TODO: replace with the public project link -->
-`https://crowdin.com/project/<your-project>`
+Translations are managed on **Crowdin**:
+https://crowdin.com/project/beyond-numbers
 
 Anyone can join the project and translate in the browser. No GitHub account or coding is needed.
 
